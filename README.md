@@ -1,0 +1,2 @@
+# easyagent
+agent控制功能组件，agent通过websocket连接server，server支持通过api下发命令或者脚本执行
