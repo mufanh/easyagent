@@ -1,0 +1,12 @@
+Server:
+  RunMode: debug
+  HttpPort: 8080
+  ReadTimeout: 10
+  WriteTimeout: 10
+  DefaultPageSize: 10
+  MaxPageSize: 100
+Log:
+  LogFilepath: logs/
+  LogFilename: server.log
+  LogMaxSize: 600
+  LogMaxAge: 10

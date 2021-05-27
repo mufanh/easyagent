@@ -1,0 +1,7 @@
+Agent:
+  WsAddr: ws://127.0.0.1:8080/websocket
+Log:
+  LogFilepath: logs/
+  LogFilename: agent.log
+  LogMaxSize: 600
+  LogMaxAge: 10
