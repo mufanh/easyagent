@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	ErrorUploadScriptFailed = errcode.NewError(30030002, "脚本上送失败")
+	ErrorUploadScriptFailed = errcode.NewError(40040001, "脚本上送失败")
 )
 
 type ScriptApiRouter struct {
