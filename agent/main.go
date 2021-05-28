@@ -54,7 +54,13 @@ func main() {
 
 func prepareJsonRpcRouter() *jsonrpc.Server {
 	server := new(jsonrpc.Server)
-	server.Register("session.close", jsonrpc2.CloseSession)
+
+	sessionRouter := new(jsonrpc2.SessionJsonRpcRouter)
+	server.Register("session.close", sessionRouter.CloseSession)
+
+	shellRouter := new(jsonrpc2.ShellJsonRpcRouter)
+	server.Register("shell.exec", shellRouter.ExecShell)
+
 	return server
 }
 

@@ -46,3 +46,11 @@ func (r *Response) ToErrorResponse(err *errcode.Error) {
 	}
 	r.Ctx.JSON(err.StatusCode(), response)
 }
+
+func (r *Response) ToSuccessResponse(data interface{}) {
+	r.Ctx.JSON(errcode.Success.StatusCode(), gin.H{
+		"code":   errcode.Success.Code,
+		"msg":    errcode.Success.Msg,
+		"result": data,
+	})
+}

@@ -4,16 +4,18 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/global"
-	"github.com/mufanh/easyagent/internal/model"
 	"github.com/pkg/errors"
 )
 
 var validate = validator.New()
 
-func CloseSession(notify bool, request *model.SessionCloseRequest, response *model.SessionCloseResponse) error {
+type SessionJsonRpcRouter struct {
+}
+
+func (s SessionJsonRpcRouter) CloseSession(notify bool, request *interface{}, response *interface{}) error {
 	if notify {
 		go func() {
-			if err := CloseSession(false, request, response); err != nil {
+			if err := s.CloseSession(false, request, response); err != nil {
 				global.Logger.Warnf("关闭连接失败，错误原因:%+v", err)
 			}
 		}()

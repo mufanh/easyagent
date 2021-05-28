@@ -1,11 +1,14 @@
 package ws
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -22,10 +25,11 @@ var upgrader = websocket.Upgrader{
 // agent通过websocket连接server
 func Connect(c *gin.Context) error {
 	data := make(map[string]string)
-	if err := c.BindHeader(data); err != nil {
-		return err
+	if len(c.Request.Header) > 0 {
+		for k, v := range c.Request.Header {
+			data[strings.ToUpper(k)] = v[0]
+		}
 	}
-
 	agentInfo := model.ConvertMap2AgentInfo(data)
 	if err := agentInfo.Check(); err != nil {
 		return err
@@ -36,7 +40,23 @@ func Connect(c *gin.Context) error {
 		return err
 	}
 
-	if err := global.ServerRepo.AddSession(agentInfo, conn); err != nil {
+	t := jsonrpc.NewWebsocketTransport(conn)
+	serv := jsonrpc.NewServer()
+	jConn := serv.NewConn(t, nil)
+
+	if err := global.ServerRepo.AddSession(agentInfo, conn, jConn); err != nil {
+		return err
+	}
+	defer func() {
+		if err := global.ServerRepo.DeleteSession(agentInfo.Token); err != nil {
+			global.Logger.Warnf("删除连接失败，详细错误原因:%+V", err)
+		}
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := jConn.Serve(ctx); err != nil {
 		return err
 	}
 

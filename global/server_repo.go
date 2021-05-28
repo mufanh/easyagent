@@ -2,6 +2,7 @@ package global
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/pkg/errors"
 	"sync"
@@ -15,8 +16,9 @@ type ServerRepository struct {
 }
 
 type SessionInfo struct {
-	AgentInfo *model.AgentInfo
-	Conn      *websocket.Conn
+	agentInfo *model.AgentInfo
+	conn      *websocket.Conn
+	jConn     *jsonrpc.Conn
 }
 
 func setupServerRepository() *ServerRepository {
@@ -26,7 +28,18 @@ func setupServerRepository() *ServerRepository {
 	}
 }
 
-func (s *ServerRepository) AddSession(agentInfo *model.AgentInfo, conn *websocket.Conn) error {
+func (s *ServerRepository) GetSessionJConn(token string) *jsonrpc.Conn {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	if info, ok := s.Sessions[token]; !ok {
+		return nil
+	} else {
+		return info.jConn
+	}
+}
+
+func (s *ServerRepository) AddSession(agentInfo *model.AgentInfo, conn *websocket.Conn, jConn *jsonrpc.Conn) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -34,26 +47,29 @@ func (s *ServerRepository) AddSession(agentInfo *model.AgentInfo, conn *websocke
 		return errors.New("添加连接失败，连接标识重复")
 	}
 
-	s.Sessions[agentInfo.Token] = &SessionInfo{AgentInfo: agentInfo, Conn: conn}
+	s.Sessions[agentInfo.Token] = &SessionInfo{agentInfo: agentInfo, conn: conn, jConn: jConn}
 	return nil
 }
 
-func (s *ServerRepository) DeleteSession(token string) {
+func (s *ServerRepository) DeleteSession(token string) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
+	conn := s.Sessions[token].conn
+	if err := conn.Close(); err != nil {
+		return err
+	}
 	delete(s.Sessions, token)
+	return nil
 }
 
 func (s *ServerRepository) ListAgentInfos() []*model.AgentInfo {
 	s.lock.RLock()
-	defer s.lock.Unlock()
+	defer s.lock.RUnlock()
 
-	r := make([]*model.AgentInfo, len(s.Sessions))
-	index := 0
+	var r = make([]*model.AgentInfo, 0)
 	for _, v := range s.Sessions {
-		r[index] = v.AgentInfo
-		index += 1
+		r = append(r, v.agentInfo)
 	}
 	return r
 }
