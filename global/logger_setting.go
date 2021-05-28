@@ -7,9 +7,7 @@ import (
 	"path/filepath"
 )
 
-var (
-	Logger *logger.Logger
-)
+var Logger *logger.Logger
 
 func SetupLogger(logFilepath string, logFilename string, maxSize int, maxAge int) error {
 	Logger = logger.NewLogger(

@@ -31,6 +31,20 @@ var doc = `{
                     "application/json"
                 ],
                 "summary": "获取agent连接列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "成功",
@@ -84,7 +98,21 @@ var doc = `{
     },
     "definitions": {
         "errcode.Error": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
         },
         "model.SessionInfo": {
             "type": "object"
@@ -108,7 +136,7 @@ var SwaggerInfo = swaggerInfo{
 	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "easyagent",
-	Description: "easyagent控制管理平台",
+	Description: "Agent控制管理器",
 }
 
 type s struct{}

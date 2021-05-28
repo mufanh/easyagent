@@ -1,5 +1,8 @@
 Agent:
   WsAddr: ws://127.0.0.1:8080/websocket
+  Token: 111111
+  TmpPath: D:\\Tmp
+  ScriptPath: D:\\Tmp\\script
 Log:
   LogFilepath: logs/
   LogFilename: agent.log

@@ -21,7 +21,12 @@ type ServerSettings struct {
 }
 
 type AgentSettings struct {
-	WsAddr string
+	WsAddr      string
+	Token       string
+	TmpPath     string
+	ScriptPath  string
+	ExecLogPath string
+	Desc        string
 }
 
 type LogSettings struct {

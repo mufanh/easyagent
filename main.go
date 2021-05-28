@@ -20,6 +20,7 @@ func init() {
 		global.ServerLogConfig.LogMaxAge); err != nil {
 		panic(errors.Wrap(err, "初始化应用日志失败"))
 	}
+
 }
 
 // @title easyagent

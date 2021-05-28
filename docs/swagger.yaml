@@ -1,17 +1,35 @@
 definitions:
   errcode.Error:
+    properties:
+      code:
+        type: integer
+      details:
+        items:
+          type: string
+        type: array
+      msg:
+        type: string
     type: object
   model.SessionInfo:
     type: object
 info:
   contact: {}
-  description: easyagent控制管理平台
+  description: Agent控制管理器
   termsOfService: https://github.com/mufanh/easyagent
   title: easyagent
   version: "1.0"
 paths:
   /api/sessions:
     get:
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:

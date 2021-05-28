@@ -14,6 +14,9 @@ require (
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/issue9/autoinc v1.0.7 // indirect
+	github.com/issue9/jsonrpc v0.12.0 // indirect
+	github.com/issue9/rands v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "easyagent控制管理平台",
+        "description": "Agent控制管理器",
         "title": "easyagent",
         "termsOfService": "https://github.com/mufanh/easyagent",
         "contact": {},
@@ -14,6 +14,20 @@
                     "application/json"
                 ],
                 "summary": "获取agent连接列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "成功",
@@ -67,7 +81,21 @@
     },
     "definitions": {
         "errcode.Error": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
         },
         "model.SessionInfo": {
             "type": "object"

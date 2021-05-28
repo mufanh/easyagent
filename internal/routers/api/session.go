@@ -13,7 +13,9 @@ type Session struct {
 // @Failure 400 {object} errcode.Error "请求错误"
 // @Failure 500 {object} errcode.Error "内部错误"
 // @Router /api/sessions [get]
-func (s Session) List(c *gin.Context) {}
+func (s Session) List(c *gin.Context) {
+
+}
 
 // @Summary 关闭agent连接
 // @Produce json
