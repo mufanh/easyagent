@@ -1,10 +1,10 @@
 Server:
   RunMode: debug
   HttpPort: 8080
-  ReadTimeout: 10
+  ReadTimeout: 10000
   WriteTimeout: 10000
   DefaultPageSize: 10000
-  MaxPageSize: 100
+  MaxPageSize: 10000
 Log:
   LogFilepath: logs/
   LogFilename: server.log

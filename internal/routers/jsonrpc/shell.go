@@ -34,7 +34,7 @@ func (s ShellJsonRpcRouter) ExecShell(notify bool, request *model.ShellExecReque
 	if request.Async {
 		err := shell.AsyncExecuteShell(request.Command, global.AgentConfig.ExecLogPath, request.Logfile)
 		if err != nil {
-			response.Error = *ErrorExecuteShell
+			response.Error = *errcode.NewError(ErrorExecuteShell.Code, err.Error())
 			return nil
 		} else {
 			response.Error = *errcode.Success
@@ -43,7 +43,7 @@ func (s ShellJsonRpcRouter) ExecShell(notify bool, request *model.ShellExecReque
 	} else {
 		log, err := shell.ExecuteShell(request.Command)
 		if err != nil {
-			response.Error = *ErrorExecuteShell
+			response.Error = *errcode.NewError(ErrorExecuteShell.Code, err.Error())
 			return nil
 		} else {
 			response.Log = log

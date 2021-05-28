@@ -43,21 +43,14 @@ func (s ShellApiRouter) Exec(c *gin.Context) {
 		return
 	}
 
-	var r *model.ShellExecResponse
-	var e *errcode.Error
 	done := make(chan bool)
 	if err := conn.Send("shell.exec", &request, func(response *model.ShellExecResponse) error {
-		r = response
+		app.NewResponse(c).ToSuccessResponse(response)
 		done <- true
 		return nil
 	}); err != nil {
-		done <- true
-		e = ErrorShellExecFailed
+		app.NewResponse(c).ToErrorResponse(ErrorShellExecFailed)
+		done <- false
 	}
 	<-done
-	if e != nil {
-		app.NewResponse(c).ToSuccessResponse(e)
-	} else {
-		app.NewResponse(c).ToSuccessResponse(r)
-	}
 }

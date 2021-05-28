@@ -3,6 +3,8 @@ Agent:
   Token: 111111
   TmpPath: D:\\Tmp
   ScriptPath: D:\\Tmp\\script
+  ExecLogPath: D:\\Tmp\\scriptlog
+  Desc:
 Log:
   LogFilepath: logs/
   LogFilename: agent.log

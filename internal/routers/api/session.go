@@ -41,5 +41,4 @@ func (s SessionApiRouter) Close(c *gin.Context) {
 	} else {
 		app.NewResponse(c).ToErrorResponse(errcode.Success)
 	}
-
 }
