@@ -10,19 +10,18 @@ type ShellExecRequest struct {
 }
 
 type ShellExecResponse struct {
-	ShellExecRequest
 	errcode.Error
 	// 若async=false，那么日志会直接记录到该字段返回
 	Log string `json:"log"`
 }
 
-func NewErrorShellExecResponse(request ShellExecRequest, err errcode.Error) *ShellExecResponse {
-	response := ShellExecResponse{request, err, ""}
-	return &response
+type ShellLogRequest struct {
+	Token   string `json:"token"`
+	Logfile string `json:"logfile"`
 }
 
-func NewSuccessShellExecResponse(request ShellExecRequest, log string) *ShellExecResponse {
-	response := ShellExecResponse{request, *errcode.Success, log}
-	return &response
-
+type ShellLogResponse struct {
+	errcode.Error
+	// 日志
+	Log string `json:"log"`
 }

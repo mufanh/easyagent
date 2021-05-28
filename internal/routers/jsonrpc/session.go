@@ -12,10 +12,10 @@ var validate = validator.New()
 type SessionJsonRpcRouter struct {
 }
 
-func (s SessionJsonRpcRouter) CloseSession(notify bool, request *interface{}, response *interface{}) error {
+func (s SessionJsonRpcRouter) Close(notify bool, request *interface{}, response *interface{}) error {
 	if notify {
 		go func() {
-			if err := s.CloseSession(false, request, response); err != nil {
+			if err := s.Close(false, request, response); err != nil {
 				global.Logger.Warnf("关闭连接失败，错误原因:%+v", err)
 			}
 		}()

@@ -14,17 +14,15 @@ var (
 type ShellJsonRpcRouter struct {
 }
 
-func (s ShellJsonRpcRouter) ExecShell(notify bool, request *model.ShellExecRequest, response *model.ShellExecResponse) error {
+func (s ShellJsonRpcRouter) Exec(notify bool, request *model.ShellExecRequest, response *model.ShellExecResponse) error {
 	if notify {
 		go func() {
-			if err := s.ExecShell(false, request, response); err != nil {
+			if err := s.Exec(false, request, response); err != nil {
 				global.Logger.Warnf("执行Shell失败，失败原因:%+v", err)
 			}
 		}()
 		return nil
 	}
-
-	response.ShellExecRequest = *request
 
 	if err := validate.Struct(request); err != nil {
 		response.Error = *errcode.InvalidParams
@@ -51,4 +49,8 @@ func (s ShellJsonRpcRouter) ExecShell(notify bool, request *model.ShellExecReque
 			return nil
 		}
 	}
+}
+
+func (s ShellJsonRpcRouter) ShowLog(notify bool, request *model.ShellLogRequest, response *model.ShellLogResponse) error {
+	return nil
 }
