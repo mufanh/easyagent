@@ -1,5 +1,5 @@
 Server:
-  RunMode: release
+  RunMode: debug
   HttpPort: 8080
   Timeout: 300000000000
   ReadTimeout: 300000000000

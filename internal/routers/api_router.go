@@ -17,6 +17,7 @@ func NewServerRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(middleware.ResponseLog())
 	if global.ServerConfig.RunMode == "debug" {
+		r.Use(middleware.Cors())
 		r.Use(gin.Recovery())
 	} else {
 		r.Use(middleware.Recovery())
