@@ -2,18 +2,18 @@ package model
 
 import "github.com/pkg/errors"
 
-var (
-	TokenHttpHeaderKey       = "_AGENT_INFO_TOKEN"
-	OSHttpHeaderKey          = "_AGENT_INFO_OS"
-	ArchHttpHeaderKey        = "_AGENT_INFO_ARCH"
-	GidHttpHeaderKey         = "_AGENT_INFO_GID"
-	UidHttpHeaderKey         = "_AGENT_INFO_UID"
-	UsernameHttpHeaderKey    = "_AGENT_INFO_USERNAME"
-	NameHttpHeaderKey        = "_AGENT_INFO_NAME"
-	HomeDirHttpHeaderKey     = "_AGENT_INFO_HOME_DIR"
-	ScriptPathHttpHeaderKey  = "_AGENT_INFO_SCRIPT_PATH"
-	ExecLogPathHttpHeaderKey = "_AGENT_INFO_EXEC_LOG_PATH"
-	DescHttpHeaderKey        = "_AGENT_INFO_DESC"
+const (
+	tokenHttpHeaderKey       = "_AGENT_INFO_TOKEN"
+	osHttpHeaderKey          = "_AGENT_INFO_OS"
+	archHttpHeaderKey        = "_AGENT_INFO_ARCH"
+	gidHttpHeaderKey         = "_AGENT_INFO_GID"
+	uidHttpHeaderKey         = "_AGENT_INFO_UID"
+	usernameHttpHeaderKey    = "_AGENT_INFO_USERNAME"
+	nameHttpHeaderKey        = "_AGENT_INFO_NAME"
+	homeDirHttpHeaderKey     = "_AGENT_INFO_HOME_DIR"
+	scriptPathHttpHeaderKey  = "_AGENT_INFO_SCRIPT_PATH"
+	execLogPathHttpHeaderKey = "_AGENT_INFO_EXEC_LOG_PATH"
+	descHttpHeaderKey        = "_AGENT_INFO_DESC"
 )
 
 type AgentInfo struct {
@@ -32,33 +32,33 @@ type AgentInfo struct {
 
 func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
 	return &AgentInfo{
-		Token:       data[TokenHttpHeaderKey],
-		OS:          data[OSHttpHeaderKey],
-		Arch:        data[ArchHttpHeaderKey],
-		Gid:         data[GidHttpHeaderKey],
-		Uid:         data[UidHttpHeaderKey],
-		Username:    data[UsernameHttpHeaderKey],
-		Name:        data[NameHttpHeaderKey],
-		HomeDir:     data[HomeDirHttpHeaderKey],
-		ScriptPath:  data[ScriptPathHttpHeaderKey],
-		ExecLogPath: data[ExecLogPathHttpHeaderKey],
-		Desc:        data[DescHttpHeaderKey],
+		Token:       data[tokenHttpHeaderKey],
+		OS:          data[osHttpHeaderKey],
+		Arch:        data[archHttpHeaderKey],
+		Gid:         data[gidHttpHeaderKey],
+		Uid:         data[uidHttpHeaderKey],
+		Username:    data[usernameHttpHeaderKey],
+		Name:        data[nameHttpHeaderKey],
+		HomeDir:     data[homeDirHttpHeaderKey],
+		ScriptPath:  data[scriptPathHttpHeaderKey],
+		ExecLogPath: data[execLogPathHttpHeaderKey],
+		Desc:        data[descHttpHeaderKey],
 	}
 }
 
 func ConvertAgentInfo2Map(agentInfo *AgentInfo) *map[string]string {
 	r := make(map[string]string)
-	r[TokenHttpHeaderKey] = agentInfo.Token
-	r[OSHttpHeaderKey] = agentInfo.OS
-	r[ArchHttpHeaderKey] = agentInfo.Arch
-	r[GidHttpHeaderKey] = agentInfo.Gid
-	r[UidHttpHeaderKey] = agentInfo.Uid
-	r[UsernameHttpHeaderKey] = agentInfo.Username
-	r[NameHttpHeaderKey] = agentInfo.Name
-	r[HomeDirHttpHeaderKey] = agentInfo.HomeDir
-	r[ScriptPathHttpHeaderKey] = agentInfo.ScriptPath
-	r[ExecLogPathHttpHeaderKey] = agentInfo.ExecLogPath
-	r[DescHttpHeaderKey] = agentInfo.Desc
+	r[tokenHttpHeaderKey] = agentInfo.Token
+	r[osHttpHeaderKey] = agentInfo.OS
+	r[archHttpHeaderKey] = agentInfo.Arch
+	r[gidHttpHeaderKey] = agentInfo.Gid
+	r[uidHttpHeaderKey] = agentInfo.Uid
+	r[usernameHttpHeaderKey] = agentInfo.Username
+	r[nameHttpHeaderKey] = agentInfo.Name
+	r[homeDirHttpHeaderKey] = agentInfo.HomeDir
+	r[scriptPathHttpHeaderKey] = agentInfo.ScriptPath
+	r[execLogPathHttpHeaderKey] = agentInfo.ExecLogPath
+	r[descHttpHeaderKey] = agentInfo.Desc
 	return &r
 }
 

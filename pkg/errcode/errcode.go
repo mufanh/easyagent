@@ -21,6 +21,14 @@ func NewError(code int, msg string) *Error {
 	return &Error{Code: code, Msg: msg}
 }
 
+func NewBizErrorWithErr(err error) *Error {
+	return &Error{Code: BizError.Code, Msg: err.Error()}
+}
+
+func NewBizErrorWithMsg(msg string) *Error {
+	return &Error{Code: BizError.Code, Msg: msg}
+}
+
 func (e *Error) Error() string {
 	return fmt.Sprintf("错误码: %d, 错误信息: %s", e.Code, e.Msg)
 }

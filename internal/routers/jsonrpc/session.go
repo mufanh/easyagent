@@ -26,11 +26,12 @@ func (s SessionJsonRpcRouter) Close(notify bool, request *interface{}, response 
 		return jsonrpc.NewErrorWithError(jsonrpc.CodeInvalidRequest, err)
 	}
 
-	conn := global.GetConn()
-	if conn != nil {
+	if conn := global.AgentRepo.Conn(); conn != nil {
 		if err := conn.Close(); err != nil {
 			return jsonrpc.NewErrorWithError(jsonrpc.CodeInternalError, errors.Wrap(err, "连接关闭失败"))
 		}
+	} else {
+		return jsonrpc.NewErrorWithError(jsonrpc.CodeInternalError, errors.New("连接不存在"))
 	}
 
 	return nil

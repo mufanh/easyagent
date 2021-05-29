@@ -10,11 +10,6 @@ import (
 	"io/ioutil"
 )
 
-var (
-	ErrorTokenNotFound   = errcode.NewError(30030001, "TOKEN不存在")
-	ErrorShellExecFailed = errcode.NewError(30030002, "Shell执行失败")
-)
-
 type ShellApiRouter struct {
 }
 
@@ -37,9 +32,9 @@ func (s ShellApiRouter) Exec(c *gin.Context) {
 		return
 	}
 
-	conn := global.ServerRepo.GetSessionJConn(request.Token)
+	conn := global.ServerRepo.SessionJConn(request.Token)
 	if conn == nil {
-		app.NewResponse(c).ToErrorResponse(ErrorTokenNotFound)
+		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
 		return
 	}
 
@@ -49,7 +44,7 @@ func (s ShellApiRouter) Exec(c *gin.Context) {
 		done <- true
 		return nil
 	}); err != nil {
-		app.NewResponse(c).ToErrorResponse(ErrorShellExecFailed)
+		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithErr(err))
 		done <- false
 	}
 	<-done

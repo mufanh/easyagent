@@ -10,10 +10,6 @@ import (
 	"io/ioutil"
 )
 
-var (
-	ErrorUploadScriptFailed = errcode.NewError(40040001, "脚本上送失败")
-)
-
 type ScriptApiRouter struct {
 }
 
@@ -36,9 +32,9 @@ func (s ScriptApiRouter) Upload(c *gin.Context) {
 		return
 	}
 
-	conn := global.ServerRepo.GetSessionJConn(request.Token)
+	conn := global.ServerRepo.SessionJConn(request.Token)
 	if conn == nil {
-		app.NewResponse(c).ToErrorResponse(ErrorTokenNotFound)
+		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
 		return
 	}
 
@@ -48,7 +44,7 @@ func (s ScriptApiRouter) Upload(c *gin.Context) {
 		done <- true
 		return nil
 	}); err != nil {
-		app.NewResponse(c).ToErrorResponse(ErrorUploadScriptFailed)
+		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithErr(err))
 		done <- false
 	}
 	<-done

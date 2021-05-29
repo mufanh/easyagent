@@ -5,18 +5,26 @@ import (
 	"github.com/issue9/jsonrpc"
 )
 
-var transport jsonrpc.Transport
-var conn *websocket.Conn
+var AgentRepo = setupAgentRepository()
 
-func SetConn(c *websocket.Conn) {
-	conn = c
-	transport = jsonrpc.NewWebsocketTransport(conn)
+type AgentRepository struct {
+	transport jsonrpc.Transport
+	conn      *websocket.Conn
 }
 
-func GetConn() *websocket.Conn {
-	return conn
+func setupAgentRepository() *AgentRepository {
+	return &AgentRepository{}
 }
 
-func GetTransport() jsonrpc.Transport {
-	return transport
+func (s *AgentRepository) SetConn(c *websocket.Conn) {
+	s.conn = c
+	s.transport = jsonrpc.NewWebsocketTransport(c)
+}
+
+func (s *AgentRepository) Conn() *websocket.Conn {
+	return s.conn
+}
+
+func (s *AgentRepository) Transport() jsonrpc.Transport {
+	return s.transport
 }

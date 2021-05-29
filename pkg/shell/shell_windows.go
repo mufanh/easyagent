@@ -22,16 +22,14 @@ func ExecuteShell(command string) (string, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 
-	err := cmd.Run()
-	if err != nil {
+	if err := cmd.Run(); err != nil {
 		return "", err
 	}
 	return out.String(), nil
 }
 
 func AsyncExecuteShell(command string, logDir string, logFile string) error {
-	err := os.MkdirAll(logDir, 0700)
-	if err != nil {
+	if err := os.MkdirAll(logDir, 0700); err != nil {
 		return errors.Wrap(err, "执行命令日志文件目录不存在，且自动创建失败")
 	}
 

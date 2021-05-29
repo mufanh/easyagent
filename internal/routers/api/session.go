@@ -7,10 +7,6 @@ import (
 	"github.com/mufanh/easyagent/pkg/errcode"
 )
 
-var (
-	ErrorCloseSession = errcode.NewError(20020001, "关闭连接失败")
-)
-
 type SessionApiRouter struct {
 }
 
@@ -23,7 +19,7 @@ type SessionApiRouter struct {
 // @Failure 500 {object} errcode.Error "内部错误"
 // @Router /api/sessions [get]
 func (s SessionApiRouter) List(c *gin.Context) {
-	agentInfos := global.ServerRepo.ListAgentInfos()
+	agentInfos := global.ServerRepo.AgentInfos()
 	app.NewResponse(c).ToResponse(agentInfos)
 }
 
@@ -37,7 +33,7 @@ func (s SessionApiRouter) List(c *gin.Context) {
 func (s SessionApiRouter) Close(c *gin.Context) {
 	token := c.Param("token")
 	if err := global.ServerRepo.DeleteSession(token); err != nil {
-		app.NewResponse(c).ToErrorResponse(ErrorCloseSession)
+		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithErr(err))
 	} else {
 		app.NewResponse(c).ToErrorResponse(errcode.Success)
 	}

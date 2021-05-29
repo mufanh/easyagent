@@ -7,10 +7,6 @@ import (
 	"github.com/mufanh/easyagent/pkg/shell"
 )
 
-var (
-	ErrorExecuteShell = errcode.NewError(40040001, "执行Shell失败")
-)
-
 type ShellJsonRpcRouter struct {
 }
 
@@ -32,7 +28,7 @@ func (s ShellJsonRpcRouter) Exec(notify bool, request *model.ShellExecRequest, r
 	if request.Async {
 		err := shell.AsyncExecuteShell(request.Command, global.AgentConfig.ExecLogPath, request.Logfile)
 		if err != nil {
-			response.Error = *errcode.NewError(ErrorExecuteShell.Code, err.Error())
+			response.Error = *errcode.NewBizErrorWithErr(err)
 			return nil
 		} else {
 			response.Error = *errcode.Success
@@ -41,7 +37,7 @@ func (s ShellJsonRpcRouter) Exec(notify bool, request *model.ShellExecRequest, r
 	} else {
 		log, err := shell.ExecuteShell(request.Command)
 		if err != nil {
-			response.Error = *errcode.NewError(ErrorExecuteShell.Code, err.Error())
+			response.Error = *errcode.NewBizErrorWithErr(err)
 			return nil
 		} else {
 			response.Log = log

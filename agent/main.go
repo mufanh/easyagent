@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"github.com/gorilla/websocket"
-	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
-	jsonrpc2 "github.com/mufanh/easyagent/internal/routers/jsonrpc"
+	"github.com/mufanh/easyagent/internal/routers"
 	"github.com/pkg/errors"
 	"net/http"
 	"os/user"
@@ -27,8 +26,6 @@ func init() {
 }
 
 func main() {
-	router := prepareJsonRpcRouter()
-
 	requestHeader, err := prepareRequestHeader()
 	if err != nil {
 		global.Logger.Fatalf("初始化Websocket Header失败，启动应用失败，详细错误原因:%+v", err)
@@ -40,34 +37,17 @@ func main() {
 		global.Logger.Fatalf("连接服务器地址%s失败，详细错误原因:%+v", global.AgentConfig.WsAddr, err)
 		return
 	}
-	global.SetConn(conn)
+	global.AgentRepo.SetConn(conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	client := router.NewConn(global.GetTransport(), nil)
+	router := routers.NewAgentJsonRpcRouter()
+	client := router.NewConn(global.AgentRepo.Transport(), nil)
 	if err = client.Serve(ctx); err != nil {
 		global.Logger.Fatalf("连接Websocket服务失败，应用启动失败，详细错误原因:%+v", err)
 		return
 	}
-}
-
-func prepareJsonRpcRouter() *jsonrpc.Server {
-	server := new(jsonrpc.Server)
-
-	sessionRouter := new(jsonrpc2.SessionJsonRpcRouter)
-	server.Register("session.close", sessionRouter.Close)
-
-	shellRouter := new(jsonrpc2.ShellJsonRpcRouter)
-	server.Register("shell.exec", shellRouter.Exec)
-	server.Register("shell.log", shellRouter.ShowLog)
-
-	scriptRouter := new(jsonrpc2.ScriptJsonRpcRouter)
-	server.Register("script.upload", scriptRouter.Upload)
-	server.Register("script.exec", scriptRouter.Exec)
-	server.Register("script.log", scriptRouter.ShowLog)
-
-	return server
 }
 
 func prepareRequestHeader() (*http.Header, error) {

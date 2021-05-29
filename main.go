@@ -29,7 +29,7 @@ func init() {
 // @termsOfService https://github.com/mufanh/easyagent
 func main() {
 	gin.SetMode(global.ServerConfig.RunMode)
-	router := routers.NewRouter()
+	router := routers.NewServerRouter()
 	s := &http.Server{
 		Addr:    ":" + strconv.Itoa(int(global.ServerConfig.HttpPort)),
 		Handler: router,

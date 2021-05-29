@@ -28,7 +28,7 @@ func setupServerRepository() *ServerRepository {
 	}
 }
 
-func (s *ServerRepository) GetSessionJConn(token string) *jsonrpc.Conn {
+func (s *ServerRepository) SessionJConn(token string) *jsonrpc.Conn {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
@@ -55,6 +55,10 @@ func (s *ServerRepository) DeleteSession(token string) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
+	if _, ok := s.Sessions[token]; !ok {
+		return errors.New("连接不存在，删除失败")
+	}
+
 	conn := s.Sessions[token].conn
 	if err := conn.Close(); err != nil {
 		return err
@@ -63,7 +67,7 @@ func (s *ServerRepository) DeleteSession(token string) error {
 	return nil
 }
 
-func (s *ServerRepository) ListAgentInfos() []*model.AgentInfo {
+func (s *ServerRepository) AgentInfos() []*model.AgentInfo {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
