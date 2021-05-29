@@ -1,7 +1,5 @@
 package model
 
-import "github.com/mufanh/easyagent/pkg/errcode"
-
 type ShellExecRequest struct {
 	Token   string `json:"token"`
 	Command string `json:"command"`
@@ -10,7 +8,7 @@ type ShellExecRequest struct {
 }
 
 type ShellExecResponse struct {
-	errcode.Error
+	baseResponse
 	// 若async=false，那么日志会直接记录到该字段返回
 	Log string `json:"log"`
 }
@@ -21,7 +19,7 @@ type ShellLogRequest struct {
 }
 
 type ShellLogResponse struct {
-	errcode.Error
+	baseResponse
 	// 日志
 	Log string `json:"log"`
 }

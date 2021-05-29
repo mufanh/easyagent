@@ -27,6 +27,7 @@ type AgentSettings struct {
 	ScriptPath  string
 	ExecLogPath string
 	Desc        string
+	ExecTimeout int
 }
 
 type LogSettings struct {

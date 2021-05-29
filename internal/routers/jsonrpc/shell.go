@@ -1,10 +1,14 @@
 package jsonrpc
 
 import (
+	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/mufanh/easyagent/pkg/errcode"
 	"github.com/mufanh/easyagent/pkg/shell"
+	"github.com/mufanh/easyagent/pkg/util/fileutil"
+	"github.com/pkg/errors"
+	"path/filepath"
 )
 
 type ShellJsonRpcRouter struct {
@@ -20,33 +24,35 @@ func (s ShellJsonRpcRouter) Exec(notify bool, request *model.ShellExecRequest, r
 		return nil
 	}
 
-	if err := validate.Struct(request); err != nil {
-		response.Error = *errcode.InvalidParams
-		return nil
-	}
-
 	if request.Async {
-		err := shell.AsyncExecuteShell(request.Command, global.AgentConfig.ExecLogPath, request.Logfile)
-		if err != nil {
-			response.Error = *errcode.NewBizErrorWithErr(err)
-			return nil
-		} else {
-			response.Error = *errcode.Success
+		if err := shell.AsyncExecuteShell(request.Command, global.AgentConfig.ExecLogPath, request.Logfile); err != nil {
+			response.SetBizErr(errors.Wrap(err, "异步执行Shell失败"))
 			return nil
 		}
 	} else {
-		log, err := shell.ExecuteShell(request.Command)
-		if err != nil {
-			response.Error = *errcode.NewBizErrorWithErr(err)
+		if log, err := shell.ExecuteShell(request.Command, global.AgentConfig.ExecTimeout); err != nil {
+			response.SetBizErr(errors.Wrap(err, "同步执行Shell失败"))
 			return nil
 		} else {
 			response.Log = log
-			response.Error = *errcode.Success
-			return nil
 		}
 	}
+
+	response.SetErr(errcode.Success)
+	return nil
 }
 
 func (s ShellJsonRpcRouter) ShowLog(notify bool, request *model.ShellLogRequest, response *model.ShellLogResponse) error {
+	if notify {
+		return jsonrpc.NewError(jsonrpc.CodeInvalidRequest, "查看日志不能是通知型调用")
+	}
+
+	if bytes, err := fileutil.Read(filepath.Join(global.AgentConfig.ExecLogPath, request.Logfile)); err != nil {
+		response.SetBizErr(errors.Wrap(err, "读取日志文件失败"))
+		return nil
+	} else {
+		response.SetErr(errcode.Success)
+		response.Log = string(bytes)
+	}
 	return nil
 }

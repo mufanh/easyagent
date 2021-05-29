@@ -1,7 +1,5 @@
 package model
 
-import "github.com/mufanh/easyagent/pkg/errcode"
-
 type ScriptUploadRequest struct {
 	Token   string `json:"token"`
 	Content string `json:"content"`
@@ -14,7 +12,7 @@ type ScriptUploadRequest struct {
 }
 
 type ScriptUploadResponse struct {
-	errcode.Error
+	baseResponse
 }
 
 type ScriptLogRequest struct {
@@ -26,7 +24,7 @@ type ScriptLogRequest struct {
 }
 
 type ScriptLogResponse struct {
-	errcode.Error
+	baseResponse
 	// 日志
 	Log string `json:"log"`
 }
@@ -43,7 +41,7 @@ type ScriptExecRequest struct {
 }
 
 type ScriptExecResponse struct {
-	errcode.Error
+	baseResponse
 	// 若async=false，那么日志会直接记录到该字段返回
 	Log string `json:"log"`
 }

@@ -5,6 +5,7 @@ Agent:
   ScriptPath: D:\\Tmp\\script
   ExecLogPath: D:\\Tmp\\scriptlog
   Desc:
+  ExecTimeout: 30000
 Log:
   LogFilepath: logs/
   LogFilename: agent.log

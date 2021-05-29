@@ -6,15 +6,33 @@ import (
 	"bufio"
 	"bytes"
 	"github.com/mufanh/easyagent/global"
+	"github.com/mufanh/easyagent/pkg/util/fileutil"
 	"github.com/pkg/errors"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"syscall"
+	"time"
 )
 
-func ExecuteShell(command string) (string, error) {
+func ExecuteScript(filename string, timeout int) (string, error) {
+	if content, err := fileutil.Read(filename); err != nil {
+		return "", errors.Wrap(err, "执行脚本文件失败")
+	} else {
+		return ExecuteShell(string(content), timeout)
+	}
+}
+
+func AsyncExecuteScript(filename string, logDir string, logFile string) error {
+	if content, err := fileutil.Read(filename); err != nil {
+		return errors.Wrap(err, "执行脚本文件失败")
+	} else {
+		return AsyncExecuteShell(string(content), logDir, logFile)
+	}
+}
+
+func ExecuteShell(command string, timeout int) (string, error) {
 	var out bytes.Buffer
 
 	cmd := exec.Command("cmd.exe", "/C", command)
@@ -22,10 +40,25 @@ func ExecuteShell(command string) (string, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 
-	if err := cmd.Run(); err != nil {
+	if err := cmd.Start(); err != nil {
 		return "", err
 	}
-	return out.String(), nil
+
+	done := make(chan error)
+	go func() {
+		done <- cmd.Wait()
+	}()
+
+	after := time.After(time.Duration(timeout) * time.Millisecond)
+	select {
+	case <-after:
+		_ = cmd.Process.Signal(syscall.SIGINT)
+		time.Sleep(10 * time.Millisecond)
+		_ = cmd.Process.Kill()
+		return "", errors.New("命令执行超时")
+	case <-done:
+		return out.String(), nil
+	}
 }
 
 func AsyncExecuteShell(command string, logDir string, logFile string) error {

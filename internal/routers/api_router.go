@@ -32,12 +32,12 @@ func NewServerRouter() *gin.Engine {
 
 	shellRouter := api.ShellApiRouter{}
 	r.POST("/api/shell/exec", shellRouter.Exec)
-	r.GET("/api/shell/log", shellRouter.ShowLog)
+	r.POST("/api/shell/log", shellRouter.ShowLog)
 
 	scriptRouter := api.ScriptApiRouter{}
 	r.POST("/api/script/upload", scriptRouter.Upload)
 	r.POST("/api/script/exec", scriptRouter.Exec)
-	r.GET("/api/script/log", scriptRouter.ShowLog)
+	r.POST("/api/script/log", scriptRouter.ShowLog)
 
 	return r
 }
