@@ -1,9 +1,9 @@
 Agent:
   WsAddr: ws://127.0.0.1:8080/websocket
   Token: 111111
-  TmpPath: D:\\Tmp
-  ScriptPath: D:\\Tmp\\script
-  ExecLogPath: D:\\Tmp\\scriptlog
+  TmpPath: tmp/
+  ScriptPath: scripts/
+  ExecLogPath: runlogs/
   Desc:
   ExecTimeout: 30000
 Log:

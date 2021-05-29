@@ -19,10 +19,8 @@ func ExecuteShell(command string, timeout int) (string, error) {
 	var out bytes.Buffer
 
 	cmd := exec.Command("sh", "-c", command)
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setctty: true,
-		Setsid:  true,
-	}
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 
@@ -58,10 +56,7 @@ func AsyncExecuteShell(command string, logDir string, logFile string) error {
 	}
 
 	cmd := exec.Command("sh", "-c", command)
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setctty: true,
-		Setsid:  true,
-	}
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {

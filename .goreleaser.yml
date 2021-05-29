@@ -33,3 +33,16 @@ builds:
       - GO111MODULE=on
     ldflags:
     binary: easyagent_agent
+
+archives:
+  - id: easyagent
+    builds: ["easyagent_server", "easyagent_agent"]
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    wrap_in_directory: true
+    files:
+      - configs/server.yaml
+      - configs/agent.yaml
+
