@@ -1,4 +1,4 @@
-// +build windows
+// +build linux darwin freebsd netbsd openbsd
 
 package shell
 
@@ -18,8 +18,11 @@ import (
 func ExecuteShell(command string, timeout int) (string, error) {
 	var out bytes.Buffer
 
-	cmd := exec.Command("cmd.exe", "/C", command)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd := exec.Command("sh", "-c", command)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setctty: true,
+		Setsid:  true,
+	}
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 
@@ -54,8 +57,11 @@ func AsyncExecuteShell(command string, logDir string, logFile string) error {
 		return errors.Wrap(err, "执行命令日志文件创建失败")
 	}
 
-	cmd := exec.Command("cmd.exe", "/C", command)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd := exec.Command("sh", "-c", command)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setctty: true,
+		Setsid:  true,
+	}
 
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {

@@ -1,0 +1,35 @@
+project_name: easyagent
+builds:
+  - id: easyagent_server
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    main: ./
+    flags:
+    env:
+      - GO111MODULE=on
+    ldflags:
+    binary: easyagent_server
+
+  - id: easyagent_agent
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    main: ./agent/
+    flags:
+    env:
+      - GO111MODULE=on
+    ldflags:
+    binary: easyagent_agent
