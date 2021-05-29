@@ -31,10 +31,10 @@ func main() {
 	gin.SetMode(global.ServerConfig.RunMode)
 	router := routers.NewServerRouter()
 	s := &http.Server{
-		Addr:    ":" + strconv.Itoa(int(global.ServerConfig.HttpPort)),
-		Handler: router,
-		//ReadTimeout:    global.ServerConfig.ReadTimeout,
-		//WriteTimeout:   global.ServerConfig.WriteTimeout,
+		Addr:           ":" + strconv.Itoa(int(global.ServerConfig.HttpPort)),
+		Handler:        router,
+		ReadTimeout:    global.ServerConfig.ReadTimeout,
+		WriteTimeout:   global.ServerConfig.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
 	if err := s.ListenAndServe(); err != nil {

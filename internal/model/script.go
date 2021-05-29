@@ -21,6 +21,9 @@ type ScriptLogRequest struct {
 	GroupDir string `json:"groupDir"`
 	// 脚本名
 	Name string `json:"name"`
+
+	Async   bool   `json:"async"`
+	Logfile string `json:"logfile"`
 }
 
 type ScriptLogResponse struct {

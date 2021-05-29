@@ -1,8 +1,9 @@
 Server:
-  RunMode: debug
+  RunMode: release
   HttpPort: 8080
-  ReadTimeout: 10000
-  WriteTimeout: 10000
+  Timeout: 300000000000
+  ReadTimeout: 300000000000
+  WriteTimeout: 300000000000
   DefaultPageSize: 10000
   MaxPageSize: 10000
 Log:

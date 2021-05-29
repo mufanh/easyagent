@@ -15,6 +15,7 @@ type ServerSettings struct {
 	HttpPort     uint16 `validate:"gte=5001,lte=65535"`
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
+	Timeout      time.Duration
 
 	DefaultPageSize int
 	MaxPageSize     int

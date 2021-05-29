@@ -1,6 +1,7 @@
 package jsonrpc
 
 import (
+	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/mufanh/easyagent/pkg/errcode"
@@ -43,7 +44,18 @@ func (s ScriptJsonRpcRouter) Upload(notify bool, request *model.ScriptUploadRequ
 	return nil
 }
 
-func (s ScriptJsonRpcRouter) ShowLog(notify bool, request *model.ScriptUploadRequest, response *model.ScriptUploadResponse) error {
+func (s ScriptJsonRpcRouter) ShowLog(notify bool, request *model.ScriptLogRequest, response *model.ScriptLogResponse) error {
+	if notify {
+		return jsonrpc.NewError(jsonrpc.CodeInvalidRequest, "查看日志不能是通知型调用")
+	}
+
+	if bytes, err := fileutil.Read(filepath.Join(global.AgentConfig.ExecLogPath, request.Logfile)); err != nil {
+		response.SetBizErr(errors.Wrap(err, "读取日志文件失败"))
+		return nil
+	} else {
+		response.SetErr(errcode.Success)
+		response.Log = string(bytes)
+	}
 	return nil
 }
 
