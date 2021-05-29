@@ -1,67 +1,8 @@
-definitions:
-  errcode.Error:
-    properties:
-      code:
-        type: integer
-      details:
-        items:
-          type: string
-        type: array
-      msg:
-        type: string
-    type: object
-  model.SessionInfo:
-    type: object
 info:
   contact: {}
   description: Agent控制管理器
   termsOfService: https://github.com/mufanh/easyagent
   title: easyagent
   version: "1.0"
-paths:
-  /api/sessions:
-    get:
-      parameters:
-      - description: 页码
-        in: query
-        name: page
-        type: integer
-      - description: 每页数量
-        in: query
-        name: page_size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/model.SessionInfo'
-        "400":
-          description: 请求错误
-          schema:
-            $ref: '#/definitions/errcode.Error'
-        "500":
-          description: 内部错误
-          schema:
-            $ref: '#/definitions/errcode.Error'
-      summary: 获取agent连接列表
-  /api/sessions/{id}:
-    delete:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            type: string
-        "400":
-          description: 请求错误
-          schema:
-            $ref: '#/definitions/errcode.Error'
-        "500":
-          description: 内部错误
-          schema:
-            $ref: '#/definitions/errcode.Error'
-      summary: 关闭agent连接
+paths: {}
 swagger: "2.0"

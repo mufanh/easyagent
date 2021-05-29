@@ -13,12 +13,6 @@ import (
 type ScriptApiRouter struct {
 }
 
-// @Summary
-// @Produce json
-// @Success 200 {object}  "成功"
-// @Failure 400 {object} errcode.Error "请求错误"
-// @Failure 500 {object} errcode.Error "内部错误"
-// @Router /api/script/upload [post]
 func (s ScriptApiRouter) Upload(c *gin.Context) {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {

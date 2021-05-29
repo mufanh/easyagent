@@ -13,12 +13,6 @@ import (
 type ShellApiRouter struct {
 }
 
-// @Summary
-// @Produce json
-// @Success 200 {object} model.AgentInfo "成功"
-// @Failure 400 {object} errcode.Error "请求错误"
-// @Failure 500 {object} errcode.Error "内部错误"
-// @Router /api/shell/exec [post]
 func (s ShellApiRouter) Exec(c *gin.Context) {
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
