@@ -89,34 +89,14 @@ func executeCommand(command string, params []string, timeout int) (string, error
 	var out bytes.Buffer
 
 	cmd := exec.Command(command, params...)
-
-	stdout, err1 := cmd.StdoutPipe()
-	if err1 != nil {
-		return "", errors.Wrap(err1, "执行命令输出管道创建失败")
-	}
-	stderr, err2 := cmd.StderrPipe()
-	if err2 != nil {
-		return "", errors.Wrap(err2, "执行命令错误输出管道创建失败")
-	}
-
-	done := make(chan error)
-
-	go func() {
-		if _, err := io.Copy(&out, stderr); err != nil {
-			done <- err
-		}
-	}()
+	cmd.Stderr = &out
+	cmd.Stdout = &out
 
 	if err := cmd.Start(); err != nil {
 		return "", err
 	}
 
-	go func() {
-		if _, err := io.Copy(&out, stdout); err != nil {
-			done <- err
-		}
-	}()
-
+	done := make(chan error)
 	go func() {
 		done <- cmd.Wait()
 	}()
