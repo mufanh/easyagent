@@ -7,7 +7,7 @@ Server:
   DefaultPageSize: 10000
   MaxPageSize: 10000
 Log:
-  LogFilepath: logs/
+  LogFilepath: ./_temp/logs/
   LogFilename: server.log
   LogMaxSize: 600
   LogMaxAge: 10

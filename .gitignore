@@ -18,3 +18,5 @@ logs/
 *.logdist/
 
 dist/
+
+_temp/
