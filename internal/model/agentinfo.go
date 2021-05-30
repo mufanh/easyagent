@@ -14,6 +14,7 @@ const (
 	scriptPathHttpHeaderKey  = "_AGENT_INFO_SCRIPT_PATH"
 	execLogPathHttpHeaderKey = "_AGENT_INFO_EXEC_LOG_PATH"
 	descHttpHeaderKey        = "_AGENT_INFO_DESC"
+	charsetHttpHeaderKey     = "_AGENT_INFO_CHARSET"
 )
 
 type AgentInfo struct {
@@ -28,6 +29,7 @@ type AgentInfo struct {
 	ScriptPath  string `json:"script_path"`
 	ExecLogPath string `json:"exec_log_path"`
 	Desc        string `json:"desc"`
+	Charset     string `json:"charset"`
 }
 
 func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
@@ -43,6 +45,7 @@ func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
 		ScriptPath:  data[scriptPathHttpHeaderKey],
 		ExecLogPath: data[execLogPathHttpHeaderKey],
 		Desc:        data[descHttpHeaderKey],
+		Charset:     data[charsetHttpHeaderKey],
 	}
 }
 
@@ -59,6 +62,7 @@ func ConvertAgentInfo2Map(agentInfo *AgentInfo) *map[string]string {
 	r[scriptPathHttpHeaderKey] = agentInfo.ScriptPath
 	r[execLogPathHttpHeaderKey] = agentInfo.ExecLogPath
 	r[descHttpHeaderKey] = agentInfo.Desc
+	r[charsetHttpHeaderKey] = agentInfo.Charset
 	return &r
 }
 

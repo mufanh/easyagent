@@ -4,6 +4,7 @@ import (
 	"github.com/issue9/jsonrpc"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
+	"github.com/mufanh/easyagent/pkg/convert"
 	"github.com/mufanh/easyagent/pkg/errcode"
 	"github.com/mufanh/easyagent/pkg/shell"
 	"github.com/mufanh/easyagent/pkg/util/fileutil"
@@ -54,7 +55,7 @@ func (s ScriptJsonRpcRouter) ShowLog(notify bool, request *model.ScriptLogReques
 		return nil
 	} else {
 		response.SetErr(errcode.Success)
-		response.Log = string(bytes)
+		response.Log = convert.MustToCharsetStr(string(bytes), global.AgentConfig.Charset, "UTF-8")
 	}
 	return nil
 }
@@ -85,7 +86,7 @@ func (s ScriptJsonRpcRouter) Exec(notify bool, request *model.ScriptExecRequest,
 			response.SetBizErr(errors.Wrap(err, "同步执行Shell脚本失败"))
 			return nil
 		} else {
-			response.Log = log
+			response.Log = convert.MustToCharsetStr(log, global.AgentConfig.Charset, "UTF-8")
 		}
 	}
 

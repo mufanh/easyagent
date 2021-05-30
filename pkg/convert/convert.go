@@ -1,6 +1,9 @@
 package convert
 
-import "strconv"
+import (
+	"github.com/axgle/mahonia"
+	"strconv"
+)
 
 type StrTo string
 
@@ -26,4 +29,16 @@ func (s StrTo) UInt32() (uint32, error) {
 func (s StrTo) MustUInt32() uint32 {
 	v, _ := s.UInt32()
 	return v
+}
+
+func MustToCharsetStr(src string, srcCode string, tagCode string) string {
+	if srcCode == tagCode {
+		return src
+	}
+	srcCoder := mahonia.NewDecoder(srcCode)
+	srcResult := srcCoder.ConvertString(src)
+	tagCoder := mahonia.NewDecoder(tagCode)
+	_, cdata, _ := tagCoder.Translate([]byte(srcResult), true)
+	result := string(cdata)
+	return result
 }
