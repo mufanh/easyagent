@@ -15,6 +15,7 @@ const (
 	execLogPathHttpHeaderKey = "_AGENT_INFO_EXEC_LOG_PATH"
 	descHttpHeaderKey        = "_AGENT_INFO_DESC"
 	charsetHttpHeaderKey     = "_AGENT_INFO_CHARSET"
+	ipsHttpHeaderKey         = "_AGENT_INFO_IPS"
 )
 
 type AgentInfo struct {
@@ -30,6 +31,7 @@ type AgentInfo struct {
 	ExecLogPath string `json:"exec_log_path"`
 	Desc        string `json:"desc"`
 	Charset     string `json:"charset"`
+	IPList      string `json:"ips"`
 }
 
 func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
@@ -46,6 +48,7 @@ func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
 		ExecLogPath: data[execLogPathHttpHeaderKey],
 		Desc:        data[descHttpHeaderKey],
 		Charset:     data[charsetHttpHeaderKey],
+		IPList:      data[ipsHttpHeaderKey],
 	}
 }
 
@@ -63,6 +66,7 @@ func ConvertAgentInfo2Map(agentInfo *AgentInfo) *map[string]string {
 	r[execLogPathHttpHeaderKey] = agentInfo.ExecLogPath
 	r[descHttpHeaderKey] = agentInfo.Desc
 	r[charsetHttpHeaderKey] = agentInfo.Charset
+	r[ipsHttpHeaderKey] = agentInfo.IPList
 	return &r
 }
 

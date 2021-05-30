@@ -6,6 +6,7 @@ import (
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/mufanh/easyagent/internal/routers"
+	"github.com/mufanh/easyagent/pkg/util/netutil"
 	"github.com/pkg/errors"
 	"net/http"
 	"os/user"
@@ -56,6 +57,11 @@ func prepareRequestHeader() (*http.Header, error) {
 		return nil, errors.Wrap(err, "获取当前用户信息失败")
 	}
 
+	ips, err := netutil.GetLocalIPsStr()
+	if err != nil {
+		return nil, errors.Wrap(err, "获取本地IP列表失败")
+	}
+
 	agentInfo := model.AgentInfo{
 		Token:       global.AgentConfig.Token,
 		OS:          runtime.GOOS,
@@ -68,6 +74,7 @@ func prepareRequestHeader() (*http.Header, error) {
 		ScriptPath:  global.AgentConfig.ScriptPath,
 		ExecLogPath: global.AgentConfig.ExecLogPath,
 		Desc:        global.AgentConfig.Desc,
+		IPList:      ips,
 	}
 	requestHeader := http.Header{}
 	for k, v := range *model.ConvertAgentInfo2Map(&agentInfo) {
