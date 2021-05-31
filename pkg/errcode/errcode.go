@@ -29,6 +29,10 @@ func NewBizErrorWithMsg(msg string) *Error {
 	return &Error{Code: BizError.Code, Msg: msg}
 }
 
+func (e *Error) IsSuccess() bool {
+	return Success.Code == e.Code
+}
+
 func (e *Error) Error() string {
 	return fmt.Sprintf("错误码: %d, 错误信息: %s", e.Code, e.Msg)
 }

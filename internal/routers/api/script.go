@@ -14,93 +14,103 @@ type ScriptApiRouter struct {
 }
 
 func (s ScriptApiRouter) Upload(c *gin.Context) {
+	responseWriter := app.NewResponse(c)
+
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.ServerError)
+		responseWriter.ToErrorResponse(errcode.ServerError)
 		return
 	}
 
 	var request model.ScriptUploadRequest
 	if err = json.Unmarshal(body, &request); err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.InvalidParams)
+		responseWriter.ToErrorResponse(errcode.InvalidParams)
 		return
 	}
 
 	conn := global.ServerRepo.SessionJConn(request.Token)
 	if conn == nil {
-		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
 		return
 	}
 
 	done := make(chan bool)
 	if err := conn.Send("script.upload", &request, func(response *model.ScriptUploadResponse) error {
-		app.NewResponse(c).ToResponse(response)
+		responseWriter.ToSuccessResponse(response)
 		done <- true
 		return nil
 	}); err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithErr(err))
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithErr(err))
 		done <- false
 	}
 	<-done
 }
 
 func (s ScriptApiRouter) ShowLog(c *gin.Context) {
+	responseWriter := app.NewResponse(c)
+
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.ServerError)
+		responseWriter.ToErrorResponse(errcode.ServerError)
 		return
 	}
 
 	var request model.ScriptLogRequest
 	if err = json.Unmarshal(body, &request); err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.InvalidParams)
+		responseWriter.ToErrorResponse(errcode.InvalidParams)
 		return
 	}
 
 	conn := global.ServerRepo.SessionJConn(request.Token)
 	if conn == nil {
-		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
 		return
 	}
 
 	done := make(chan bool)
 	if err := conn.Send("script.log", &request, func(response *model.ScriptLogResponse) error {
-		app.NewResponse(c).ToResponse(response)
+		responseWriter.ToSuccessResponse(response)
 		done <- true
 		return nil
 	}); err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithErr(err))
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithErr(err))
 		done <- false
 	}
 	<-done
 }
 
 func (s ScriptApiRouter) Exec(c *gin.Context) {
+	responseWriter := app.NewResponse(c)
+
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.ServerError)
+		responseWriter.ToErrorResponse(errcode.ServerError)
 		return
 	}
 
 	var request model.ScriptExecRequest
 	if err = json.Unmarshal(body, &request); err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.InvalidParams)
+		responseWriter.ToErrorResponse(errcode.InvalidParams)
 		return
 	}
 
 	conn := global.ServerRepo.SessionJConn(request.Token)
 	if conn == nil {
-		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
 		return
 	}
 
 	done := make(chan bool)
 	if err := conn.Send("script.exec", &request, func(response *model.ScriptExecResponse) error {
-		app.NewResponse(c).ToResponse(response)
+		if response.IsSuccess() {
+			responseWriter.ToSuccessResponse(response)
+		} else {
+			responseWriter.ToErrorResponse(&response.Error)
+		}
 		done <- true
 		return nil
 	}); err != nil {
-		app.NewResponse(c).ToErrorResponse(errcode.NewBizErrorWithErr(err))
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithErr(err))
 		done <- false
 	}
 	<-done

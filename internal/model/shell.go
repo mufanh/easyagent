@@ -8,7 +8,7 @@ type ShellExecRequest struct {
 }
 
 type ShellExecResponse struct {
-	baseResponse
+	BaseResponse
 	// 若async=false，那么日志会直接记录到该字段返回
 	Log string `json:"log"`
 }
@@ -19,7 +19,7 @@ type ShellLogRequest struct {
 }
 
 type ShellLogResponse struct {
-	baseResponse
+	BaseResponse
 	// 日志
 	Log string `json:"log"`
 }
