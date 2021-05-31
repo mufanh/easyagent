@@ -36,11 +36,7 @@ func (s ShellApiRouter) Exec(c *gin.Context) {
 
 	done := make(chan bool)
 	if err := conn.Send("shell.exec", &request, func(response *model.ShellExecResponse) error {
-		if response.IsSuccess() {
-			responseWriter.ToSuccessResponse(response)
-		} else {
-			responseWriter.ToErrorResponse(&response.Error)
-		}
+		responseWriter.ToResponse(response)
 		done <- true
 		return nil
 	}); err != nil {
@@ -73,11 +69,7 @@ func (s ShellApiRouter) ShowLog(c *gin.Context) {
 
 	done := make(chan bool)
 	if err := conn.Send("shell.log", &request, func(response *model.ShellLogResponse) error {
-		if response.IsSuccess() {
-			responseWriter.ToSuccessResponse(response)
-		} else {
-			responseWriter.ToErrorResponse(&response.Error)
-		}
+		responseWriter.ToResponse(response)
 		done <- true
 		return nil
 	}); err != nil {

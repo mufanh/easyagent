@@ -2,13 +2,12 @@ package errcode
 
 import (
 	"fmt"
-	"net/http"
 )
 
 type Error struct {
 	Code    int      `json:"code"`
-	Msg     string   `json:"msg"`
-	Details []string `json:"details"`
+	Msg     string   `json:"msg,omitempty"`
+	Details []string `json:"details,omitempty"`
 }
 
 var codes = map[int]string{}
@@ -29,10 +28,6 @@ func NewBizErrorWithMsg(msg string) *Error {
 	return &Error{Code: BizError.Code, Msg: msg}
 }
 
-func (e *Error) IsSuccess() bool {
-	return Success.Code == e.Code
-}
-
 func (e *Error) Error() string {
 	return fmt.Sprintf("错误码: %d, 错误信息: %s", e.Code, e.Msg)
 }
@@ -47,20 +42,4 @@ func (e *Error) WithDetails(details ...string) *Error {
 		e.Details = append(e.Details, d)
 	}
 	return e
-}
-
-func (e *Error) StatusCode() int {
-	switch e.Code {
-	case Success.Code:
-		return http.StatusOK
-	case ServerError.Code:
-		return http.StatusInternalServerError
-	case InvalidParams.Code:
-		return http.StatusBadRequest
-	case NotFound.Code:
-		return http.StatusNotFound
-	case TooManyRequests.Code:
-		return http.StatusTooManyRequests
-	}
-	return http.StatusInternalServerError
 }

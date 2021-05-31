@@ -29,7 +29,7 @@ type ScriptLogRequest struct {
 type ScriptLogResponse struct {
 	BaseResponse
 	// 日志
-	Log string `json:"log"`
+	Log string `json:"log,omitempty"`
 }
 
 type ScriptExecRequest struct {
@@ -46,5 +46,5 @@ type ScriptExecRequest struct {
 type ScriptExecResponse struct {
 	BaseResponse
 	// 若async=false，那么日志会直接记录到该字段返回
-	Log string `json:"log"`
+	Log string `json:"log,omitempty"`
 }

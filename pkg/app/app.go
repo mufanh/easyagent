@@ -14,7 +14,7 @@ func NewResponse(ctx *gin.Context) *Response {
 	return &Response{Ctx: ctx}
 }
 
-func (r *Response) ToSuccessResponse(data interface{}) {
+func (r *Response) ToResponse(data interface{}) {
 	if data == nil {
 		data = gin.H{}
 	}
@@ -27,5 +27,5 @@ func (r *Response) ToErrorResponse(err *errcode.Error) {
 	if len(details) > 0 {
 		response["details"] = details
 	}
-	r.Ctx.JSON(err.StatusCode(), response)
+	r.Ctx.JSON(http.StatusOK, response)
 }

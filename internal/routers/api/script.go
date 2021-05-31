@@ -36,7 +36,7 @@ func (s ScriptApiRouter) Upload(c *gin.Context) {
 
 	done := make(chan bool)
 	if err := conn.Send("script.upload", &request, func(response *model.ScriptUploadResponse) error {
-		responseWriter.ToSuccessResponse(response)
+		responseWriter.ToResponse(response)
 		done <- true
 		return nil
 	}); err != nil {
@@ -69,7 +69,7 @@ func (s ScriptApiRouter) ShowLog(c *gin.Context) {
 
 	done := make(chan bool)
 	if err := conn.Send("script.log", &request, func(response *model.ScriptLogResponse) error {
-		responseWriter.ToSuccessResponse(response)
+		responseWriter.ToResponse(response)
 		done <- true
 		return nil
 	}); err != nil {
@@ -102,11 +102,7 @@ func (s ScriptApiRouter) Exec(c *gin.Context) {
 
 	done := make(chan bool)
 	if err := conn.Send("script.exec", &request, func(response *model.ScriptExecResponse) error {
-		if response.IsSuccess() {
-			responseWriter.ToSuccessResponse(response)
-		} else {
-			responseWriter.ToErrorResponse(&response.Error)
-		}
+		responseWriter.ToResponse(response)
 		done <- true
 		return nil
 	}); err != nil {

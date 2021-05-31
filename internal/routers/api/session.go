@@ -12,7 +12,7 @@ type SessionApiRouter struct {
 
 func (s SessionApiRouter) List(c *gin.Context) {
 	agentInfos := global.ServerRepo.AgentInfos()
-	app.NewResponse(c).ToSuccessResponse(agentInfos)
+	app.NewResponse(c).ToResponse(agentInfos)
 }
 
 func (s SessionApiRouter) Close(c *gin.Context) {
@@ -22,6 +22,6 @@ func (s SessionApiRouter) Close(c *gin.Context) {
 	if err := global.ServerRepo.DeleteSession(token); err != nil {
 		responseWriter.ToErrorResponse(errcode.NewBizErrorWithErr(err))
 	} else {
-		responseWriter.ToSuccessResponse(errcode.Success)
+		responseWriter.ToResponse(errcode.Success)
 	}
 }
