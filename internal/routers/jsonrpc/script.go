@@ -143,7 +143,7 @@ func (s ScriptJsonRpcRouter) DeleteGroupDir(notify bool, request *model.DeleteSc
 		}
 	}
 
-	if err := os.Remove(filename); err != nil {
+	if err := os.RemoveAll(filename); err != nil {
 		response.SetBizErr(errors.Wrap(err, "删除脚本分组失败"))
 		return nil
 	}
