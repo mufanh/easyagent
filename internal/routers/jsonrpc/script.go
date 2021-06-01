@@ -46,17 +46,24 @@ func (s ScriptJsonRpcRouter) Upload(notify bool, request *model.ScriptUploadRequ
 	return nil
 }
 
-func (s ScriptJsonRpcRouter) ShowLog(notify bool, request *model.ScriptLogRequest, response *model.ScriptLogResponse) error {
+func (s ScriptJsonRpcRouter) Show(notify bool, request *model.ShowScriptRequest, response *model.ShowScriptResponse) error {
 	if notify {
-		return jsonrpc.NewError(jsonrpc.CodeInvalidRequest, "查看日志不能是通知型调用")
+		return jsonrpc.NewError(jsonrpc.CodeInvalidRequest, "查看脚本不能是通知型服务")
 	}
 
-	if bytes, err := fileutil.Read(filepath.Join(global.AgentConfig.ExecLogPath, request.Logfile)); err != nil {
-		response.SetBizErr(errors.Wrap(err, "读取日志文件失败"))
-	} else {
-		response.SetErr(errcode.Success)
-		response.Log = convert.MustToCharsetStr(string(bytes), global.AgentConfig.Charset, "UTF-8")
+	filename := filepath.Join(global.AgentConfig.ScriptPath, request.GroupDir, request.Name)
+	if exist, _ := fileutil.Exists(filename); !exist {
+		response.SetErr(errcode.NewBizErrorWithMsg("脚本不存在"))
+		return nil
 	}
+
+	if content, err := fileutil.Read(filename); err != nil {
+		response.SetErr(errcode.NewBizErrorWithMsg("脚本读取失败"))
+	} else {
+		response.Content = string(content)
+		response.SetErr(errcode.Success)
+	}
+
 	return nil
 }
 

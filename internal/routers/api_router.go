@@ -34,20 +34,22 @@ func NewServerRouter() *gin.Engine {
 		}
 	})
 
-	sessionRouter := api.SessionApiRouter{}
+	sessionRouter := new(api.SessionApiRouter)
 	r.GET("/api/sessions", sessionRouter.List)
 	r.DELETE("/api/sessions/:token", sessionRouter.Close)
 
-	shellRouter := api.ShellApiRouter{}
-	r.POST("/api/shell/exec", shellRouter.Exec)
-	r.POST("/api/shell/log", shellRouter.ShowLog)
+	commandRouter := new(api.CommandApiRouter)
+	r.POST("/api/command/exec", commandRouter.Exec)
 
-	scriptRouter := api.ScriptApiRouter{}
+	scriptRouter := new(api.ScriptApiRouter)
 	r.POST("/api/script/upload", scriptRouter.Upload)
+	r.POST("/api/script/show", scriptRouter.Show)
 	r.POST("/api/script/exec", scriptRouter.Exec)
-	r.POST("/api/script/log", scriptRouter.ShowLog)
 	r.POST("/api/script/groups", scriptRouter.ShowGroupDirs)
 	r.POST("/api/script/files", scriptRouter.ShowScriptFiles)
+
+	shellLogRouter := new(api.ShellLogApiRouter)
+	r.POST("/api/shell/log", shellLogRouter.Show)
 
 	return r
 }

@@ -46,7 +46,7 @@ func (s ScriptApiRouter) Upload(c *gin.Context) {
 	<-done
 }
 
-func (s ScriptApiRouter) ShowLog(c *gin.Context) {
+func (s ScriptApiRouter) Show(c *gin.Context) {
 	responseWriter := result.NewResponse(c)
 
 	body, err := ioutil.ReadAll(c.Request.Body)
@@ -55,7 +55,7 @@ func (s ScriptApiRouter) ShowLog(c *gin.Context) {
 		return
 	}
 
-	var request model.ScriptLogRequest
+	var request model.ShowScriptRequest
 	if err = json.Unmarshal(body, &request); err != nil {
 		responseWriter.ToErrorResponse(errcode.InvalidParams)
 		return
@@ -68,7 +68,7 @@ func (s ScriptApiRouter) ShowLog(c *gin.Context) {
 	}
 
 	done := make(chan bool)
-	if err := conn.Send("script.log", &request, func(response *model.ScriptLogResponse) error {
+	if err := conn.Send("script.show", &request, func(response *model.ShowScriptResponse) error {
 		responseWriter.ToResponse(response)
 		done <- true
 		return nil

@@ -15,15 +15,17 @@ type ScriptUploadResponse struct {
 	BaseResponse
 }
 
-type ScriptLogRequest struct {
-	Token   string `json:"token"`
-	Logfile string `json:"logfile"`
+type ShowScriptRequest struct {
+	Token string `json:"token"`
+	// 脚本分组名（脚本上一级目录名）
+	GroupDir string `json:"group_dir"`
+	// 脚本名
+	Name string `json:"name"`
 }
 
-type ScriptLogResponse struct {
+type ShowScriptResponse struct {
 	BaseResponse
-	// 日志
-	Log string `json:"log,omitempty"`
+	Content string `json:"content"`
 }
 
 type ScriptExecRequest struct {
@@ -49,18 +51,15 @@ type ScriptShowGroupDirsRequest struct {
 
 type ScriptShowGroupDirsResponse struct {
 	BaseResponse
-
 	GroupDirs []string `json:"group_dirs"`
 }
 
 type ScriptShowFilesRequest struct {
-	Token string `json:"token"`
-
+	Token    string `json:"token"`
 	GroupDir string `json:"group_dir"`
 }
 
 type ScriptShowFilesResponse struct {
 	BaseResponse
-
 	ScriptFiles []string `json:"script_files"`
 }

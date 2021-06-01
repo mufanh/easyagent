@@ -11,16 +11,18 @@ func NewAgentJsonRpcRouter() *jsonrpc.Server {
 	sessionRouter := new(jsonrpc2.SessionJsonRpcRouter)
 	server.Register("session.close", sessionRouter.Close)
 
-	shellRouter := new(jsonrpc2.ShellJsonRpcRouter)
+	shellRouter := new(jsonrpc2.CommandJsonRpcRouter)
 	server.Register("shell.exec", shellRouter.Exec)
-	server.Register("shell.log", shellRouter.ShowLog)
 
 	scriptRouter := new(jsonrpc2.ScriptJsonRpcRouter)
 	server.Register("script.upload", scriptRouter.Upload)
+	server.Register("script.show", scriptRouter.Show)
 	server.Register("script.exec", scriptRouter.Exec)
-	server.Register("script.log", scriptRouter.ShowLog)
 	server.Register("script.showGroupDirs", scriptRouter.ShowGroupDirs)
 	server.Register("script.showScriptFiles", scriptRouter.ShowScriptFiles)
+
+	shellLogRouter := new(jsonrpc2.ShellLogJsonRpcRouter)
+	server.Register("shell.showLog", shellLogRouter.Show)
 
 	return server
 }
