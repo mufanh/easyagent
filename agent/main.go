@@ -2,14 +2,18 @@ package main
 
 import (
 	"context"
+	"github.com/gookit/goutil/strutil"
 	"github.com/gorilla/websocket"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/mufanh/easyagent/internal/routers"
 	"github.com/mufanh/easyagent/pkg/util/netutil"
+	"github.com/nightlyone/lockfile"
 	"github.com/pkg/errors"
 	"net/http"
+	"os"
 	"os/user"
+	"path/filepath"
 	"runtime"
 )
 
@@ -27,6 +31,21 @@ func init() {
 }
 
 func main() {
+	if lock, err := lockfile.New(filepath.Join(os.TempDir(), strutil.Md5(global.AgentConfig.WsAddr))); err != nil {
+		global.Logger.Fatalf("启动easyagent-agent失败，创建lock文件失败，详细错误原因:%+v", err)
+		return
+	} else {
+		if err := lock.TryLock(); err != nil {
+			global.Logger.Fatalf("启动easyagent-agent失败，获取lock文件失败，详细错误原因:%+v", err)
+			return
+		}
+		defer func() {
+			if err := lock.Unlock(); err != nil {
+				global.Logger.Warnf("lock文件解锁失败，详细错误原因:%+v", err)
+			}
+		}()
+	}
+
 	requestHeader, err := prepareRequestHeader()
 	if err != nil {
 		global.Logger.Fatalf("初始化Websocket Header失败，启动应用失败，详细错误原因:%+v", err)

@@ -14,6 +14,7 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gookit/goutil v0.3.14 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/issue9/autoinc v1.0.7 // indirect
 	github.com/issue9/jsonrpc v0.12.0 // indirect
@@ -27,6 +28,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/nightlyone/lockfile v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.9.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
