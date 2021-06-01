@@ -10,6 +10,7 @@ import (
 	"github.com/mufanh/easyagent/pkg/util/fileutil"
 	"github.com/pkg/errors"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -63,6 +64,90 @@ func (s ScriptJsonRpcRouter) Show(notify bool, request *model.ShowScriptRequest,
 		response.Content = string(content)
 		response.SetErr(errcode.Success)
 	}
+
+	return nil
+}
+
+func (s ScriptJsonRpcRouter) Delete(notify bool, request *model.DeleteScriptRequest, response *model.DeleteScriptResponse) error {
+	if notify {
+		if notify {
+			go func() {
+				if err := s.Delete(false, request, response); err != nil {
+					global.Logger.Warnf("脚本删除失败，错误原因:%+v", err)
+				}
+			}()
+			return nil
+		}
+	}
+
+	filename := filepath.Join(global.AgentConfig.ScriptPath, request.GroupDir, request.Name)
+	if exist, _ := fileutil.Exists(filename); !exist {
+		response.SetErr(errcode.NewBizErrorWithMsg("脚本不存在"))
+		return nil
+	}
+
+	if fileInfo, err := fileutil.GetFileInfo(filename); err != nil {
+		response.SetErr(errcode.NewBizErrorWithMsg("获取脚本文件信息失败"))
+		return nil
+	} else {
+		if fileInfo.IsDir() {
+			response.SetErr(errcode.NewBizErrorWithMsg("脚本路径不正确，不能是Directory"))
+			return nil
+		}
+	}
+
+	if err := os.Remove(filename); err != nil {
+		response.SetBizErr(errors.Wrap(err, "删除脚本失败"))
+		return nil
+	}
+	response.SetErr(errcode.Success)
+
+	return nil
+}
+
+func (s ScriptJsonRpcRouter) DeleteGroupDir(notify bool, request *model.DeleteScriptGroupDirRequest, response *model.DeleteScriptGroupDirResponse) error {
+	if notify {
+		if notify {
+			go func() {
+				if err := s.DeleteGroupDir(false, request, response); err != nil {
+					global.Logger.Warnf("删除脚本分组失败，错误原因:%+v", err)
+				}
+			}()
+			return nil
+		}
+	}
+
+	filename := filepath.Join(global.AgentConfig.ScriptPath, request.GroupDir)
+	if exist, _ := fileutil.Exists(filename); !exist {
+		response.SetErr(errcode.NewBizErrorWithMsg("脚本分组不存在"))
+		return nil
+	}
+
+	if fileInfo, err := fileutil.GetFileInfo(filename); err != nil {
+		response.SetErr(errcode.NewBizErrorWithMsg("获取脚本分组目录信息失败"))
+		return nil
+	} else {
+		if !fileInfo.IsDir() {
+			response.SetErr(errcode.NewBizErrorWithMsg("脚本分组路径不正确，必须为Directory"))
+			return nil
+		}
+	}
+
+	if fileInfos, err := ioutil.ReadDir(filename); err != nil {
+		response.SetBizErr(errors.Wrap(err, "获取脚本分组下面的脚本列表失败"))
+		return nil
+	} else {
+		if len(fileInfos) > 0 {
+			response.SetBizErr(errors.New("脚本分组下面不为空，无法删除"))
+			return nil
+		}
+	}
+
+	if err := os.Remove(filename); err != nil {
+		response.SetBizErr(errors.Wrap(err, "删除脚本分组失败"))
+		return nil
+	}
+	response.SetErr(errcode.Success)
 
 	return nil
 }

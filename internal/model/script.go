@@ -28,6 +28,25 @@ type ShowScriptResponse struct {
 	Content string `json:"content"`
 }
 
+type DeleteScriptRequest struct {
+	Token    string `json:"token"`
+	GroupDir string `json:"group_dir"`
+	Name     string `json:"name"`
+}
+
+type DeleteScriptResponse struct {
+	BaseResponse
+}
+
+type DeleteScriptGroupDirRequest struct {
+	Token    string `json:"token"`
+	GroupDir string `json:"group_dir"`
+}
+
+type DeleteScriptGroupDirResponse struct {
+	BaseResponse
+}
+
 type ScriptExecRequest struct {
 	Token string `json:"token"`
 	// 脚本分组名（脚本上一级目录名）

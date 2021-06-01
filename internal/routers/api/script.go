@@ -79,6 +79,72 @@ func (s ScriptApiRouter) Show(c *gin.Context) {
 	<-done
 }
 
+func (s ScriptApiRouter) Delete(c *gin.Context) {
+	responseWriter := result.NewResponse(c)
+
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		responseWriter.ToErrorResponse(errcode.ServerError)
+		return
+	}
+
+	var request model.DeleteScriptRequest
+	if err = json.Unmarshal(body, &request); err != nil {
+		responseWriter.ToErrorResponse(errcode.InvalidParams)
+		return
+	}
+
+	conn := global.ServerRepo.SessionJConn(request.Token)
+	if conn == nil {
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
+		return
+	}
+
+	done := make(chan bool)
+	if err := conn.Send("script.delete", &request, func(response *model.DeleteScriptResponse) error {
+		responseWriter.ToResponse(response)
+		done <- true
+		return nil
+	}); err != nil {
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithErr(err))
+		done <- false
+	}
+	<-done
+}
+
+func (s ScriptApiRouter) DeleteGroupDir(c *gin.Context) {
+	responseWriter := result.NewResponse(c)
+
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		responseWriter.ToErrorResponse(errcode.ServerError)
+		return
+	}
+
+	var request model.DeleteScriptGroupDirRequest
+	if err = json.Unmarshal(body, &request); err != nil {
+		responseWriter.ToErrorResponse(errcode.InvalidParams)
+		return
+	}
+
+	conn := global.ServerRepo.SessionJConn(request.Token)
+	if conn == nil {
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithMsg("Token不存在"))
+		return
+	}
+
+	done := make(chan bool)
+	if err := conn.Send("script.deleteGroupDir", &request, func(response *model.DeleteScriptGroupDirResponse) error {
+		responseWriter.ToResponse(response)
+		done <- true
+		return nil
+	}); err != nil {
+		responseWriter.ToErrorResponse(errcode.NewBizErrorWithErr(err))
+		done <- false
+	}
+	<-done
+}
+
 func (s ScriptApiRouter) Exec(c *gin.Context) {
 	responseWriter := result.NewResponse(c)
 
