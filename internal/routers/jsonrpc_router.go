@@ -19,6 +19,8 @@ func NewAgentJsonRpcRouter() *jsonrpc.Server {
 	server.Register("script.upload", scriptRouter.Upload)
 	server.Register("script.exec", scriptRouter.Exec)
 	server.Register("script.log", scriptRouter.ShowLog)
+	server.Register("script.showGroupDirs", scriptRouter.ShowGroupDirs)
+	server.Register("script.showScriptFiles", scriptRouter.ShowScriptFiles)
 
 	return server
 }

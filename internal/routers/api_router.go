@@ -46,6 +46,8 @@ func NewServerRouter() *gin.Engine {
 	r.POST("/api/script/upload", scriptRouter.Upload)
 	r.POST("/api/script/exec", scriptRouter.Exec)
 	r.POST("/api/script/log", scriptRouter.ShowLog)
+	r.POST("/api/script/groups", scriptRouter.ShowGroupDirs)
+	r.POST("/api/script/files", scriptRouter.ShowScriptFiles)
 
 	return r
 }

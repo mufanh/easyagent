@@ -9,6 +9,7 @@ import (
 	"github.com/mufanh/easyagent/pkg/shell"
 	"github.com/mufanh/easyagent/pkg/util/fileutil"
 	"github.com/pkg/errors"
+	"io/ioutil"
 	"path/filepath"
 )
 
@@ -52,7 +53,6 @@ func (s ScriptJsonRpcRouter) ShowLog(notify bool, request *model.ScriptLogReques
 
 	if bytes, err := fileutil.Read(filepath.Join(global.AgentConfig.ExecLogPath, request.Logfile)); err != nil {
 		response.SetBizErr(errors.Wrap(err, "读取日志文件失败"))
-		return nil
 	} else {
 		response.SetErr(errcode.Success)
 		response.Log = convert.MustToCharsetStr(string(bytes), global.AgentConfig.Charset, "UTF-8")
@@ -79,17 +79,60 @@ func (s ScriptJsonRpcRouter) Exec(notify bool, request *model.ScriptExecRequest,
 	if request.Async {
 		if err := shell.AsyncExecuteScript(filename, global.AgentConfig.ExecLogPath, request.Logfile); err != nil {
 			response.SetBizErr(errors.Wrap(err, "异步执行Shell脚本失败"))
-			return nil
+		} else {
+			response.SetErr(errcode.Success)
 		}
 	} else {
 		if log, err := shell.ExecuteScript(filename, global.AgentConfig.ExecTimeout); err != nil {
 			response.SetBizErr(errors.Wrap(err, "同步执行Shell脚本失败"))
-			return nil
 		} else {
 			response.Log = convert.MustToCharsetStr(log, global.AgentConfig.Charset, "UTF-8")
+			response.SetErr(errcode.Success)
 		}
 	}
 
-	response.SetErr(errcode.Success)
+	return nil
+}
+
+func (s ScriptJsonRpcRouter) ShowGroupDirs(notify bool, request *model.ScriptShowGroupDirsRequest, response *model.ScriptShowGroupDirsResponse) error {
+	if notify {
+		return jsonrpc.NewError(jsonrpc.CodeInvalidRequest, "查看脚本分组目录不能是通知型服务")
+	}
+
+	if fileInfos, err := ioutil.ReadDir(global.AgentConfig.ScriptPath); err != nil {
+		response.SetBizErr(errors.Wrap(err, "获取脚本分组目录列表失败"))
+	} else {
+		groupDirs := make([]string, 0)
+		for i := 0; i < len(fileInfos); i++ {
+			if fileInfos[i].IsDir() {
+				groupDirs = append(groupDirs, fileInfos[i].Name())
+			}
+		}
+		response.GroupDirs = groupDirs
+		response.SetErr(errcode.Success)
+	}
+
+	return nil
+}
+
+func (s ScriptJsonRpcRouter) ShowScriptFiles(notify bool, request *model.ScriptShowFilesRequest, response *model.ScriptShowFilesResponse) error {
+	if notify {
+		return jsonrpc.NewError(jsonrpc.CodeInvalidRequest, "查看固定分组下脚本服务不能是通知型服务")
+	}
+
+	groupDir := filepath.Join(global.AgentConfig.ScriptPath, request.GroupDir)
+	if fileInfos, err := ioutil.ReadDir(groupDir); err != nil {
+		response.SetBizErr(errors.Wrap(err, "获取脚本分组下脚本列表失败"))
+	} else {
+		files := make([]string, 0)
+		for i := 0; i < len(fileInfos); i++ {
+			if !fileInfos[i].IsDir() {
+				files = append(files, fileInfos[i].Name())
+			}
+		}
+		response.ScriptFiles = files
+		response.SetErr(errcode.Success)
+	}
+
 	return nil
 }

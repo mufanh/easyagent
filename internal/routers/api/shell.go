@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
-	"github.com/mufanh/easyagent/pkg/app"
 	"github.com/mufanh/easyagent/pkg/errcode"
+	"github.com/mufanh/easyagent/pkg/result"
 	"io/ioutil"
 )
 
@@ -14,7 +14,7 @@ type ShellApiRouter struct {
 }
 
 func (s ShellApiRouter) Exec(c *gin.Context) {
-	responseWriter := app.NewResponse(c)
+	responseWriter := result.NewResponse(c)
 
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -47,7 +47,7 @@ func (s ShellApiRouter) Exec(c *gin.Context) {
 }
 
 func (s ShellApiRouter) ShowLog(c *gin.Context) {
-	responseWriter := app.NewResponse(c)
+	responseWriter := result.NewResponse(c)
 
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {

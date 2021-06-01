@@ -3,9 +3,9 @@
 package shell
 
 func ExecuteShell(command string, timeout int) (string, error) {
-	return executeCommand("sh", []string{"-c", command}, timeout)
+	return executeCommand("sh", []string{command}, timeout)
 }
 
 func AsyncExecuteShell(command string, logDir string, logFile string) error {
-	return asyncExecuteCommand("sh", []string{"-c", command}, logDir, logFile)
+	return asyncExecuteCommand("sh", []string{command}, logDir, logFile)
 }
