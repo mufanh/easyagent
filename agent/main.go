@@ -11,6 +11,7 @@ import (
 	"github.com/mufanh/easyagent/pkg/util/netutil"
 	"github.com/nightlyone/lockfile"
 	"github.com/pkg/errors"
+	"github.com/robfig/cron"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"os"
@@ -86,9 +87,33 @@ func main() {
 		return
 	}
 
+	go serve(requestHeader)
+
+	c := cron.New()
+	if err := c.AddFunc("0 * * * * *", func() {
+		serve(requestHeader)
+	}); err != nil {
+		global.Logger.Warnf("Agent重连定时任务启动失败，若连接断开会导致无法发起重连")
+	} else {
+		c.Start()
+	}
+
+	global.AgentRepo.Wait()
+}
+
+func serve(requestHeader *http.Header) {
+	if global.AgentRepo.IsConnected() {
+		return
+	}
+	global.AgentRepo.SetConnected(true)
+
+	defer func() {
+		global.AgentRepo.SetConnected(false)
+	}()
+
 	conn, _, err := websocket.DefaultDialer.Dial(global.AgentConfig.WsAddr, *requestHeader)
 	if err != nil {
-		global.Logger.Fatalf("连接服务器地址%s失败，详细错误原因:%+v", global.AgentConfig.WsAddr, err)
+		global.Logger.Warnf("连接服务器地址%s失败，详细错误原因:%+v", global.AgentConfig.WsAddr, err)
 		return
 	}
 	global.AgentRepo.SetConn(conn)
@@ -99,7 +124,7 @@ func main() {
 	router := routers.NewAgentJsonRpcRouter()
 	client := router.NewConn(global.AgentRepo.Transport(), nil)
 	if err = client.Serve(ctx); err != nil {
-		global.Logger.Fatalf("连接Websocket服务失败，应用启动失败，详细错误原因:%+v", err)
+		global.Logger.Warnf("连接Websocket服务失败，应用启动失败，详细错误原因:%+v", err)
 		return
 	}
 }
