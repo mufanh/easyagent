@@ -7,9 +7,11 @@ import (
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/mufanh/easyagent/internal/routers"
+	"github.com/mufanh/easyagent/pkg/util/fileutil"
 	"github.com/mufanh/easyagent/pkg/util/netutil"
 	"github.com/nightlyone/lockfile"
 	"github.com/pkg/errors"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"os"
 	"os/user"
@@ -44,6 +46,38 @@ func main() {
 				global.Logger.Warnf("lock文件解锁失败，详细错误原因:%+v", err)
 			}
 		}()
+	}
+
+	// 如果启动没有配置token，那么随机生成一个UUID
+	if global.AgentConfig.Token == "" {
+		// 先从uid生成文件中获取，若没有该文件，则随机生成一个，然后保存在文件中
+		filename := filepath.Join(global.AgentConfig.TmpPath, ".easyagent_agent.token")
+		if exists, _ := fileutil.Exists(filename); exists {
+			if bytes, err := fileutil.Read(filename); err != nil {
+				global.Logger.Fatalf("启动easyagent-agent失败，读取.easyagent_agent.token文件失败")
+				return
+			} else {
+				token := string(bytes)
+				if token == "" {
+					global.Logger.Fatalf("启动easyagent-agent失败，文件.easyagent_agent.token记录的token为空，请手动删除后重启应用")
+					return
+				}
+				global.AgentConfig.Token = token
+			}
+		} else {
+			uid := uuid.NewV4()
+			global.AgentConfig.Token = uid.String()
+			// 写入到文件中
+			go func() {
+				if err := fileutil.MkdirAll(global.AgentConfig.TmpPath, 0700); err != nil {
+					global.Logger.Warnf("生成easyagent临时目录文件失败，错误信息:%+v", err)
+				} else {
+					if err := fileutil.Write(filename, []byte(global.AgentConfig.Token)); err != nil {
+						global.Logger.Warnf("写入.easyagent_agent.token文件失败，详细错误信息:%+v", err)
+					}
+				}
+			}()
+		}
 	}
 
 	requestHeader, err := prepareRequestHeader()

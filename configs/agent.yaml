@@ -1,6 +1,6 @@
 Agent:
-  WsAddr: ws://127.0.0.1:8080/websocket
-  Token: 111111
+  WsAddr: ws://127.0.0.1:8888/websocket
+  Token:
   TmpPath: ./_temp/tmp/
   ScriptPath: ./_temp/scripts/
   ExecLogPath: ./_temp/runlogs/
