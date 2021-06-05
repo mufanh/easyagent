@@ -90,7 +90,8 @@ func main() {
 	go serve(requestHeader)
 
 	c := cron.New()
-	if err := c.AddFunc("0 * * * * *", func() {
+	if err := c.AddFunc("0/10 * * * * *", func() {
+		// 定时重连
 		serve(requestHeader)
 	}); err != nil {
 		global.Logger.Warnf("Agent重连定时任务启动失败，若连接断开会导致无法发起重连")
@@ -123,6 +124,7 @@ func serve(requestHeader *http.Header) {
 
 	router := routers.NewAgentJsonRpcRouter()
 	client := router.NewConn(global.AgentRepo.Transport(), nil)
+
 	if err = client.Serve(ctx); err != nil {
 		global.Logger.Warnf("连接Websocket服务失败，应用启动失败，详细错误原因:%+v", err)
 		return

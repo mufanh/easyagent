@@ -55,3 +55,8 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+// 修复了：上游连接断开，下游读发生error后，继续向通道写入error，接入又触发错误，
+// 直至抛出panic("repeated read on failed websocket connection")
+replace github.com/issue9/jsonrpc => ./extern/jsonrpc
+
