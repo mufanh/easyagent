@@ -18,6 +18,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"time"
 )
 
 func init() {
@@ -112,11 +113,19 @@ func serve(requestHeader *http.Header) {
 		global.AgentRepo.SetConnected(false)
 	}()
 
+	// 重新设置连接时间
+	requestHeader.Set(model.ConnectTimeHttpHeaderKey, time.Now().Format("2006-01-02 15:04:05"))
+
+	global.Logger.Infof("开始发起对%s的websocket连接", global.AgentConfig.WsAddr)
+
 	conn, _, err := websocket.DefaultDialer.Dial(global.AgentConfig.WsAddr, *requestHeader)
 	if err != nil {
 		global.Logger.Warnf("连接服务器地址%s失败，详细错误原因:%+v", global.AgentConfig.WsAddr, err)
 		return
 	}
+
+	global.Logger.Infof("连接%s成功", global.AgentConfig.WsAddr)
+
 	global.AgentRepo.SetConn(conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -126,7 +135,7 @@ func serve(requestHeader *http.Header) {
 	client := router.NewConn(global.AgentRepo.Transport(), nil)
 
 	if err = client.Serve(ctx); err != nil {
-		global.Logger.Warnf("连接Websocket服务失败，应用启动失败，详细错误原因:%+v", err)
+		global.Logger.Warnf("连接被断开，详细错误原因:%+v", err)
 		return
 	}
 }
@@ -144,6 +153,7 @@ func prepareRequestHeader() (*http.Header, error) {
 
 	agentInfo := model.AgentInfo{
 		Token:       global.AgentConfig.Token,
+		ConnectTime: time.Now().Format("2006-01-02 15:04:05"),
 		OS:          runtime.GOOS,
 		Arch:        runtime.GOARCH,
 		Gid:         currentUser.Gid,

@@ -24,6 +24,8 @@ var upgrader = websocket.Upgrader{
 
 // agent通过websocket连接server
 func Connect(c *gin.Context) error {
+	global.Logger.Infof("收到新连接，连接地址:%s\n", c.Request.RemoteAddr)
+
 	data := make(map[string]string)
 	if len(c.Request.Header) > 0 {
 		for k, v := range c.Request.Header {

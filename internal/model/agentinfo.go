@@ -4,6 +4,7 @@ import "github.com/pkg/errors"
 
 const (
 	tokenHttpHeaderKey       = "_AGENT_INFO_TOKEN"
+	ConnectTimeHttpHeaderKey = "_AGENT_INFO_CONNECT_TIME"
 	osHttpHeaderKey          = "_AGENT_INFO_OS"
 	archHttpHeaderKey        = "_AGENT_INFO_ARCH"
 	gidHttpHeaderKey         = "_AGENT_INFO_GID"
@@ -20,6 +21,7 @@ const (
 
 type AgentInfo struct {
 	Token       string `json:"token"`
+	ConnectTime string `json:"connect_time"`
 	OS          string `json:"os"`
 	Arch        string `json:"arch"`
 	Gid         string `json:"gid"`
@@ -37,6 +39,7 @@ type AgentInfo struct {
 func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
 	return &AgentInfo{
 		Token:       data[tokenHttpHeaderKey],
+		ConnectTime: data[ConnectTimeHttpHeaderKey],
 		OS:          data[osHttpHeaderKey],
 		Arch:        data[archHttpHeaderKey],
 		Gid:         data[gidHttpHeaderKey],
@@ -55,6 +58,7 @@ func ConvertMap2AgentInfo(data map[string]string) *AgentInfo {
 func ConvertAgentInfo2Map(agentInfo *AgentInfo) *map[string]string {
 	r := make(map[string]string)
 	r[tokenHttpHeaderKey] = agentInfo.Token
+	r[ConnectTimeHttpHeaderKey] = agentInfo.ConnectTime
 	r[osHttpHeaderKey] = agentInfo.OS
 	r[archHttpHeaderKey] = agentInfo.Arch
 	r[gidHttpHeaderKey] = agentInfo.Gid
