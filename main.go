@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/routers"
@@ -9,8 +10,17 @@ import (
 	"strconv"
 )
 
+var (
+	configPath string
+	configName string
+)
+
 func init() {
-	if err := global.SetupServerSetting("configs/", "server"); err != nil {
+	flag.StringVar(&configPath, "configPath", "configs/", "配置文件加载路径")
+	flag.StringVar(&configName, "configName", "server", "配置文件名")
+	flag.Parse()
+
+	if err := global.SetupServerSetting(configPath, configName); err != nil {
 		panic(errors.Wrap(err, "初始化应用配置失败"))
 	}
 	if err := global.SetupLogger(

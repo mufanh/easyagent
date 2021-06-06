@@ -8,9 +8,6 @@ import (
 func NewAgentJsonRpcRouter() *jsonrpc.Server {
 	server := new(jsonrpc.Server)
 
-	sessionRouter := new(jsonrpc2.SessionJsonRpcRouter)
-	server.Register("session.close", sessionRouter.Close)
-
 	shellRouter := new(jsonrpc2.CommandJsonRpcRouter)
 	server.Register("shell.exec", shellRouter.Exec)
 

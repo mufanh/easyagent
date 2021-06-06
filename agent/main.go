@@ -2,27 +2,37 @@ package main
 
 import (
 	"context"
-	"github.com/gookit/goutil/strutil"
+	"flag"
 	"github.com/gorilla/websocket"
 	"github.com/mufanh/easyagent/global"
 	"github.com/mufanh/easyagent/internal/model"
 	"github.com/mufanh/easyagent/internal/routers"
 	"github.com/mufanh/easyagent/pkg/util/fileutil"
 	"github.com/mufanh/easyagent/pkg/util/netutil"
-	"github.com/nightlyone/lockfile"
 	"github.com/pkg/errors"
 	"github.com/robfig/cron"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"os"
+	"os/signal"
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"syscall"
 	"time"
 )
 
+var (
+	configPath string
+	configName string
+)
+
 func init() {
-	if err := global.SetupAgentSetting("configs/", "agent"); err != nil {
+	flag.StringVar(&configPath, "configPath", "configs/", "配置文件加载路径")
+	flag.StringVar(&configName, "configName", "agent", "配置文件名")
+	flag.Parse()
+
+	if err := global.SetupAgentSetting(configPath, configName); err != nil {
 		panic(errors.Wrap(err, "初始化应用配置失败"))
 	}
 	if err := global.SetupLogger(
@@ -35,7 +45,7 @@ func init() {
 }
 
 func main() {
-	if lock, err := lockfile.New(filepath.Join(os.TempDir(), strutil.Md5(global.AgentConfig.WsAddr))); err != nil {
+	/*if lock, err := lockfile.New(filepath.Join(os.TempDir(), strutil.Md5(global.AgentConfig.WsAddr))); err != nil {
 		global.Logger.Fatalf("启动easyagent-agent失败，创建lock文件失败，详细错误原因:%+v", err)
 		return
 	} else {
@@ -48,7 +58,7 @@ func main() {
 				global.Logger.Warnf("lock文件解锁失败，详细错误原因:%+v", err)
 			}
 		}()
-	}
+	}*/
 
 	// 如果启动没有配置token，那么随机生成一个UUID
 	if global.AgentConfig.Token == "" {
@@ -100,7 +110,9 @@ func main() {
 		c.Start()
 	}
 
-	global.AgentRepo.Wait()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 }
 
 func serve(requestHeader *http.Header) {

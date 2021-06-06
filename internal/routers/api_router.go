@@ -36,7 +36,6 @@ func NewServerRouter() *gin.Engine {
 
 	sessionRouter := new(api.SessionApiRouter)
 	r.GET("/api/sessions", sessionRouter.List)
-	r.DELETE("/api/sessions/:token", sessionRouter.Close)
 
 	commandRouter := new(api.CommandApiRouter)
 	r.POST("/api/command/exec", commandRouter.Exec)
