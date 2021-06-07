@@ -15,6 +15,7 @@ func NewAgentJsonRpcRouter() *jsonrpc.Server {
 	server.Register("script.upload", scriptRouter.Upload)
 	server.Register("script.show", scriptRouter.Show)
 	server.Register("script.delete", scriptRouter.Delete)
+	server.Register("script.update", scriptRouter.Update)
 	server.Register("script.deleteGroupDir", scriptRouter.DeleteGroupDir)
 	server.Register("script.exec", scriptRouter.Exec)
 	server.Register("script.showGroupDirs", scriptRouter.ShowGroupDirs)

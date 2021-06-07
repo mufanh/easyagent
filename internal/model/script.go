@@ -38,6 +38,19 @@ type DeleteScriptResponse struct {
 	BaseResponse
 }
 
+type ScriptUpdateRequest struct {
+	Token   string `json:"token"`
+	Content string `json:"content"`
+	// 脚本分组名（脚本上一级目录名）
+	GroupDir string `json:"group_dir"`
+	// 脚本名
+	Name string `json:"name"`
+}
+
+type ScriptUpdateResponse struct {
+	BaseResponse
+}
+
 type DeleteScriptGroupDirRequest struct {
 	Token    string `json:"token"`
 	GroupDir string `json:"group_dir"`

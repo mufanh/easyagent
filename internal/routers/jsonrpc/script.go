@@ -105,6 +105,41 @@ func (s ScriptJsonRpcRouter) Delete(notify bool, request *model.DeleteScriptRequ
 	return nil
 }
 
+func (s ScriptJsonRpcRouter) Update(notify bool, request *model.ScriptUpdateRequest, response *model.ScriptUpdateResponse) error {
+	if notify {
+		go func() {
+			if err := s.Update(false, request, response); err != nil {
+				global.Logger.Warnf("脚本更新失败，错误原因:%+v", err)
+			}
+		}()
+		return nil
+	}
+
+	filename := filepath.Join(global.AgentConfig.ScriptPath, request.GroupDir, request.Name)
+	if exist, _ := fileutil.Exists(filename); !exist {
+		response.SetErr(errcode.NewBizErrorWithMsg("脚本不存在"))
+		return nil
+	}
+
+	if fileInfo, err := fileutil.GetFileInfo(filename); err != nil {
+		response.SetErr(errcode.NewBizErrorWithMsg("获取脚本文件信息失败"))
+		return nil
+	} else {
+		if fileInfo.IsDir() {
+			response.SetErr(errcode.NewBizErrorWithMsg("脚本路径不正确，不能是Directory"))
+			return nil
+		}
+	}
+
+	if err := fileutil.Write(filename, []byte(request.Content)); err != nil {
+		response.SetBizErr(errors.Wrap(err, "脚本更新失败"))
+		return nil
+	}
+
+	response.SetErr(errcode.Success)
+	return nil
+}
+
 func (s ScriptJsonRpcRouter) DeleteGroupDir(notify bool, request *model.DeleteScriptGroupDirRequest, response *model.DeleteScriptGroupDirResponse) error {
 	if notify {
 		if notify {

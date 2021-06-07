@@ -13,14 +13,6 @@ import (
 	"time"
 )
 
-func ExecuteScript(filename string, timeout int) (string, error) {
-	return ExecuteShell(filename, timeout)
-}
-
-func AsyncExecuteScript(filename string, logDir string, logFile string) error {
-	return AsyncExecuteShell(filename, logDir, logFile)
-}
-
 func asyncExecuteCommand(command string, params []string, logDir string, logFile string) error {
 	if err := os.MkdirAll(logDir, 0700); err != nil {
 		return errors.Wrap(err, "执行命令日志文件目录不存在，且自动创建失败")
